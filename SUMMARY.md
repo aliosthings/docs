@@ -28,7 +28,3 @@
 * [AliOS Things Starter Kit](starterkit.md)
 * [认证模组](modules.md)
 
-## AliOS Things RTOS
-
-## AliOS Things Linux
-
