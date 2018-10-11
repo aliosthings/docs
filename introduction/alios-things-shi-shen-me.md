@@ -1,5 +1,7 @@
 # AliOS Things 简介
 
+![](https://img.alicdn.com/tfs/TB1JlOChbvpK1RjSZFqXXcXUVXa-400-82.svg)
+
 {% tabs %}
 {% tab title="First Tab" %}
 1st
