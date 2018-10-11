@@ -1,5 +1,15 @@
 # AliOS Things 简介
 
+{% tabs %}
+{% tab title="First Tab" %}
+1st
+{% endtab %}
+
+{% tab title="Second Tab" %}
+2nd
+{% endtab %}
+{% endtabs %}
+
 AliOS Things发布于2017年杭州云栖大会， 是 AliOS 家族旗下的、面向IoT领域的、高可伸缩的物联网操作系统
 
 ## 愿景
