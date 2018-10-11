@@ -1,22 +1,22 @@
 # 关于IoT网络的一些特征的探讨
 
-网络是IoT设备非常关键的部分,本文和大家一起探讨IoT网络的几个重要特征，及AliOS Things尝试提供的一些解决方案。
-<br>
+网络是IoT设备非常关键的部分,本文和大家一起探讨IoT网络的几个重要特征，及AliOS Things尝试提供的一些解决方案。   
+
 
 ## IP网络
 
-![图1 互联网全球连接快照图](https://img.alicdn.com/tfs/TB1DUoUjY_I8KJjy1XaXXbsxpXa-640-640.jpg)
+![&#x56FE;1 &#x4E92;&#x8054;&#x7F51;&#x5168;&#x7403;&#x8FDE;&#x63A5;&#x5FEB;&#x7167;&#x56FE;](https://img.alicdn.com/tfs/TB1DUoUjY_I8KJjy1XaXXbsxpXa-640-640.jpg)
 
 今天是一个多样化的时代，不管什么技术都有多种标准存在，明争暗斗，每个人都有自己的小算盘，想要形成一个大一统的标准非常困难。从这个角度来说，IP网络的存在是个奇迹。IP网络真正做到了无种族，无国界，即插即用。IP网络可以为万物互联提供一个很好的基础。这种趋势也越来越明显，Zigbee推出了Zigbee IP，而谷歌也推出了同样基于802.15.4的Thread，Silicon Labs，TI等Zigbee核心厂商也纷纷支持（谷歌收购的Nest所使用的Thread是Silicon Labs开发的）。
 
 IP网络还能给物联网带来几个明显的好处：
 
-- IP之上有大量成熟的软件栈，比如安全组件TLS/DTLS
-- IPv6能提供足够多的地址空间
-- 大量熟悉socket的软件开发人员
+* IP之上有大量成熟的软件栈，比如安全组件TLS/DTLS
+* IPv6能提供足够多的地址空间
+* 大量熟悉socket的软件开发人员
 
-当然IP只是提供了一个通道，还需要有上层的协议来做保证“彼此听得懂”，现在比较流行的有阿里云的ICA联盟，OCF，Google Weave，HomeKit的存在，这个话题在此不展开。
-<br>
+当然IP只是提供了一个通道，还需要有上层的协议来做保证“彼此听得懂”，现在比较流行的有阿里云的ICA联盟，OCF，Google Weave，HomeKit的存在，这个话题在此不展开。   
+
 
 ## UDP网络
 
@@ -28,29 +28,27 @@ TCP是一种面向连接的，可靠的，基于字节流的传输层协议。TC
 
 设想一下常见的传感器定时上传数据的场景：采集数据，上报数据，睡眠。因为定时上报，很多情况下，偶尔丢失数据是可以接受的。但是TCP为了提高数据到达率，其保活和重传机制会降低电池寿命，同时重传机制会消耗内存。
 
-目前主流的云端通道协议还是基于TCP，主要是MQTT，包括阿里云IoT套件，Amazon，Azure。而[阿里云IoT套件](https://help.aliyun.com/document_detail/57697.html?spm=5176.100239.blogcont309562.12.vn0LZB)也支持CoAP，Google Weave也主要采用了UDP作为通信手段。
-<br>
+目前主流的云端通道协议还是基于TCP，主要是MQTT，包括阿里云IoT套件，Amazon，Azure。而[阿里云IoT套件](https://help.aliyun.com/document_detail/57697.html?spm=5176.100239.blogcont309562.12.vn0LZB)也支持CoAP，Google Weave也主要采用了UDP作为通信手段。   
+
 
 ## 多种通信技术并存
 
 不同的通信技术，其速率，覆盖范围，可靠性，功耗，部署，成本都是不同的，没有一种技术能包治百病。3G/4G网络在覆盖范围上优于WiFi，但是在速率，功耗，成本上又不如WiFi。WiFi在速率上秒杀BLE，但是功耗又被BLE秒杀。
 
-物联网领域，LPWA（Low Power Wide Area）技术NB-IoT，LoRa，SigFox受到广泛关注，其低功耗广覆盖的特点，简化了各种复杂环境下的部署。基于802.15.4的WSN(Wireless Sensor Network)[3]技术Zigbee，Wi-Sun，在功耗和成本优势明显，适合大规模部署。
+物联网领域，LPWA（Low Power Wide Area）技术NB-IoT，LoRa，SigFox受到广泛关注，其低功耗广覆盖的特点，简化了各种复杂环境下的部署。基于802.15.4的WSN\(Wireless Sensor Network\)\[3\]技术Zigbee，Wi-Sun，在功耗和成本优势明显，适合大规模部署。
 
-WiFi/BLE在消费电子类的普及度，其应用受到广泛关注。WiFi由于不需要网关，受到各种家电厂商的青睐（但是家里的智能设备越来越多时，AP的连接数将成为瓶颈）。同时，面向物联网WiFi联盟于2016年推出了WiFi的低功耗版本，802.11ah（Wi-Fi HaLow）[4]。BLE随着5.0的推出，更快的速率，更大的mtu，除了提高现有的点到点通信体验，基于BLE构建WSN也变得可能，对Zigbee等现有技术构成了威胁。
+WiFi/BLE在消费电子类的普及度，其应用受到广泛关注。WiFi由于不需要网关，受到各种家电厂商的青睐（但是家里的智能设备越来越多时，AP的连接数将成为瓶颈）。同时，面向物联网WiFi联盟于2016年推出了WiFi的低功耗版本，802.11ah（Wi-Fi HaLow）\[4\]。BLE随着5.0的推出，更快的速率，更大的mtu，除了提高现有的点到点通信体验，基于BLE构建WSN也变得可能，对Zigbee等现有技术构成了威胁。
 
-![图3 一种典型的WSN架构](https://img.alicdn.com/tfs/TB1jGj9j9_I8KJjy0FoXXaFnVXa-554-262.png)
-<br>
+![&#x56FE;3 &#x4E00;&#x79CD;&#x5178;&#x578B;&#x7684;WSN&#x67B6;&#x6784;](https://img.alicdn.com/tfs/TB1jGj9j9_I8KJjy0FoXXaFnVXa-554-262.png)
 
 ## 多种连接方式及网络拓扑并存
 
-下图是常见的网络拓扑：
-![图2 网络拓扑](https://img.alicdn.com/tfs/TB1Zvp2hOqAXuNjy1XdXXaYcVXa-406-199.png)
+下图是常见的网络拓扑： ![&#x56FE;2 &#x7F51;&#x7EDC;&#x62D3;&#x6251;](https://img.alicdn.com/tfs/TB1Zvp2hOqAXuNjy1XdXXaYcVXa-406-199.png)
 
 图1 互联网全球连接快照图，可以隐约看出一棵棵树的存在。在以太网中，Tree和Bus较为常见，有线局域网内部是一个Bus拓扑，但是从访问互联网的角度，需要经过网关，网关就成为了树的根节点，所以也是一种Tree拓扑。而在无线局域网中，WiFi是Star拓扑，WSN以Tree/Mesh为主。在广域网包括LPWA，可以看作以基站为主的Star拓扑，基站之间则是Mesh拓扑。
 
-在现有的以太网构成的骨干网基础上，在物联网中相信WSN/LPWA会有越来越多的应用。WSN的低成本低功耗，配合LPWA的低功耗广覆盖，可以覆盖非常广的物联网场景。
-<br>
+在现有的以太网构成的骨干网基础上，在物联网中相信WSN/LPWA会有越来越多的应用。WSN的低成本低功耗，配合LPWA的低功耗广覆盖，可以覆盖非常广的物联网场景。   
+
 
 ## AliOS Things的网络特性
 
@@ -72,13 +70,10 @@ uMesh是无线协议无关的，IP之下，MAC之上的自组织网络协议栈�
 
 ## 总结
 
-本文探讨了IoT网络的一些特征，及AliOS Things的一些相应特性，欢迎访问AliOS Things github官网：https://github.com/alibaba/AliOS-Things，和我们一起构建一个更好的面向物联网的操作系统。
-<br>
+本文探讨了IoT网络的一些特征，及AliOS Things的一些相应特性，欢迎访问AliOS Things github官网：[https://github.com/alibaba/AliOS-Things，和我们一起构建一个更好的面向物联网的操作系统。](https://github.com/alibaba/AliOS-Things，和我们一起构建一个更好的面向物联网的操作系统。)   
+
 
 ## 引用
 
-[1][Computer Network](https://en.wikipedia.org/wiki/Computer_network)
-[2][Network Topology](https://en.wikipedia.org/wiki/Network_topology)
-[3][WSN](https://en.wikipedia.org/wiki/Wireless_sensor_network)
-[4][802.11ah](https://en.wikipedia.org/wiki/IEEE_802.11ah)
-[5][M2M with UDP](http://www.embedded.com/design/real-world-applications/4426378/Speed-up-machine-to-machine-networking-with-UDP)
+\[1\][Computer Network](https://en.wikipedia.org/wiki/Computer_network) \[2\][Network Topology](https://en.wikipedia.org/wiki/Network_topology) \[3\][WSN](https://en.wikipedia.org/wiki/Wireless_sensor_network) \[4\][802.11ah](https://en.wikipedia.org/wiki/IEEE_802.11ah) \[5\][M2M with UDP](http://www.embedded.com/design/real-world-applications/4426378/Speed-up-machine-to-machine-networking-with-UDP)
+

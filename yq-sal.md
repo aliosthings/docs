@@ -1,18 +1,14 @@
 # AliOS Things 网络适配框架 - SAL
 
-
-
 **摘要**：很多物联网应用场景中，都需要使用主控MCU外接连接芯片（如WiFi、NB-IoT）的解决方案。为方便这类场景的开发，AliOS Things提供了Socket Adapter Layer（SAL）框架和组件方案。
-
-
 
 AliOS Things中提供了丰富的SAL开发组件，来加速MCU+通信连接芯片的应用场景开发和部署。在此类应用场景中，主控MCU芯片通过UART或SPI总线与WiFi、NB-IoT等通信芯片相连，AliOS Things操作系统和用户APP运行在主控MCU中，需要网络数据访问时，通过外接的通信芯片进行网络负载的接收和发射。主控MCU和外接通信芯片之间的通信，可以是AT Command通道，也可以是厂商私有协议通道。
 
-![at_scena2](https://img.alicdn.com/tfs/TB1pO7NmhSYBuNjSsphXXbGvVXa-374-397.png)
+![at\_scena2](https://img.alicdn.com/tfs/TB1pO7NmhSYBuNjSsphXXbGvVXa-374-397.png)
 
 ## AliOS Things SAL方案概述
 
-目前，AliOS Things提供了atparser、at_adapter、SAL等开发组件。借助这些组件，用户可以方便地进行应用开发，同时这些组件也方便厂商在现有MCU产品基础上通过外接通信芯片方式扩展网络访问能力。下图展示了AliOS Things提供的SAL组件和方案架构：
+目前，AliOS Things提供了atparser、at\_adapter、SAL等开发组件。借助这些组件，用户可以方便地进行应用开发，同时这些组件也方便厂商在现有MCU产品基础上通过外接通信芯片方式扩展网络访问能力。下图展示了AliOS Things提供的SAL组件和方案架构：
 
 ![](https://img.alicdn.com/tfs/TB1CCjJmDtYBeNjy1XdXXXXyVXa-1372-1344.png)
 
@@ -20,7 +16,7 @@ AliOS Things中提供了丰富的SAL开发组件，来加速MCU+通信连接芯�
 
 基于atparser的基础上，AliOS Things进一步提供了Socket Adapter Layer（SAL）组件（即上图中的方案一）。SAL组件提供AT通道或厂商私有协议通道（如高通通信模组的WMI）到Socket套接字（如`socket`、`getaddrinfo`、`send`、`recvfrom`等）接口的对接。通过SAL组件，应用层不需要关注通信芯片底层操作的细节，只需要通过标准的Socket接口来达到访问网络的目的。SAL组件支持大多数常用的Socket接口。SAL组件可以很大程度上提高应用层开发的效率，显著降低应用层开发的难度。
 
-此外，AliOS Things还提供了另外一种基于AT Command的网络访问方案 - SAL LwIP模式（即上图中的方案三）。SAL LwIP模式基于at_adapter组件工具。at_adapter组件提供AT底层到LwIP的对接，即AT通道作为LwIP的一个网络接口（netif）。使用该方案时，应用层通过标准的Socket接口访问网络，不需要关注底层AT细节。该方案无缝对接LwIP协议栈，应用层可以使用所有LwIP提供的接口和服务。但该方案需要连接芯片固件支持IP包收发模式，目前庆科的moc108已经支持该模式。
+此外，AliOS Things还提供了另外一种基于AT Command的网络访问方案 - SAL LwIP模式（即上图中的方案三）。SAL LwIP模式基于at\_adapter组件工具。at\_adapter组件提供AT底层到LwIP的对接，即AT通道作为LwIP的一个网络接口（netif）。使用该方案时，应用层通过标准的Socket接口访问网络，不需要关注底层AT细节。该方案无缝对接LwIP协议栈，应用层可以使用所有LwIP提供的接口和服务。但该方案需要连接芯片固件支持IP包收发模式，目前庆科的moc108已经支持该模式。
 
 ## atparser组件
 
@@ -46,7 +42,7 @@ if (at.recv("OK") == false) {
 
 AT事件的处理（例如网络数据到达），通过注册的oob回调函数处理。`at_worker`线程负责识别AT事件并通过调用`oob`回调函数处理AT事件和数据。
 
-## Socket Adapter Layer (SAL)
+## Socket Adapter Layer \(SAL\)
 
 SAL模块提供基于AT Command或厂商私有协议方案实现的标准Socket接口访问。下图是SAL（方案一）的架构图。
 
@@ -108,12 +104,13 @@ AliOS Things还提供了SAL LwIP模式（方案二）。该方案区别于方案
 
 该方案的运行方式类似于MCU行业常用的SLIP（Serial Line Internet Protocol）方案，区别在于底层使用厂商模组/芯片的AT Command命令和服务，厂商模组/芯片不需要额外再支持SLIP通信。
 
-at_adapter组件提供AT底层到LwIP网络接口（netif）的对接。通过netif的对接，AT通道可以无缝对接上LwIP。该模式下，SAL对上层应用提供完整的TCP/IP协议栈接口和服务。该方案的缺点是需要AT通信模块固件支持IP包传输，目前moc108已经支持该模式。
+at\_adapter组件提供AT底层到LwIP网络接口（netif）的对接。通过netif的对接，AT通道可以无缝对接上LwIP。该模式下，SAL对上层应用提供完整的TCP/IP协议栈接口和服务。该方案的缺点是需要AT通信模块固件支持IP包传输，目前moc108已经支持该模式。
 
 ## 总结
 
 综上所述，AliOS Things提供了丰富的AT组件和方案。AliOS Things提供的AT框架和组件，具有以下优势：
 
-+ 为主控MCU外接连接芯片场景提供完整解决方案；
-+ 可以降低上层应用开发基于AT场景的应用的难度，提高开发效率，加速产品部署；
-+ 方便模组和设备厂商在现有成熟的MCU产品和方案上，通过AT方式扩展网络连接能力，而不需要将先有的MCU芯片切换成WiFi或其他具有网络通信能力的平台。
+* 为主控MCU外接连接芯片场景提供完整解决方案；
+* 可以降低上层应用开发基于AT场景的应用的难度，提高开发效率，加速产品部署；
+* 方便模组和设备厂商在现有成熟的MCU产品和方案上，通过AT方式扩展网络连接能力，而不需要将先有的MCU芯片切换成WiFi或其他具有网络通信能力的平台。
+

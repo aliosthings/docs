@@ -22,7 +22,7 @@ Raspberry PI3一块
 
 设置交叉编译工具链路径。
 
-```
+```text
 `luwang@ubuntu:~/raspberry-pi/linux$ export CCPREFIX=/home/luwang/raspberry-pi/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/bin/arm-linux-gnueabihf- 
 luwang@ubuntu:~/raspberry-pi/linux$ ${CCPREFIX}gcc -v
 Using built-in specs.
@@ -43,12 +43,11 @@ luwang@ubuntu:~/raspberry-pi/linux$`
 
 在linux机器上拷贝生成的Raspberry PI kernel配置文件，并解压。
 
-`scp pi@raspberrypi:/proc/config.gz PATH_TO_RASPBERRY_PI/linux
-gunzip -c config.gz > .config`
+`scp pi@raspberrypi:/proc/config.gz PATH_TO_RASPBERRY_PI/linux gunzip -c config.gz > .config`
 
 修改配置文件以下配置选项
 
-```
+```text
 `CONFIG_CRYPTO_CMAC=y
 CONFIG_CRYPTO_USER_API=y
 CONFIG_CRYPTO_USER_API_HASH=y
@@ -57,7 +56,7 @@ CONFIG_CRYPTO_USER_API_SKCIPHER=y`
 
 编译生成内核
 
-```
+```text
 `cd PATH_TO_RASPBERRY_PI/linux
 ARCH=arm CROSS_COMPILE=${CCPREFIX} make`
 ```
@@ -68,7 +67,7 @@ ARCH=arm CROSS_COMPILE=${CCPREFIX} make`
 
 得到以下log信息
 
-```
+```text
 `  INSTALL sound/soc/codecs/snd-soc-tas5713.ko
   INSTALL sound/soc/codecs/snd-soc-tpa6130a2.ko
   INSTALL sound/soc/codecs/snd-soc-wm-adsp.ko
@@ -125,7 +124,7 @@ luwang@ubuntu:~/raspberry-pi/linux$ `
 
 在linux机器上，从linux拷贝生成的modules到Raspberry PI
 
-```
+```text
 `cd PATH_TO_RASPBERRY_PI/modules
 tar czf modules.tgz *
 scp modules.tgz pi@RASPBERRY:/tmp`
@@ -133,14 +132,14 @@ scp modules.tgz pi@RASPBERRY:/tmp`
 
 将拷贝到Raspberry PI上的kernel和modules移动到boot和lib下面
 
-```
+```text
 `sudo cp /tmp/kernel_new.img /boot
 sudo tar zxf /tmp/modules.tgz
 sudo cp -rf /tmp/lib/firmware /lib/firmware
 sudo cp -rf /tmp/lib/modules /lib/modules`
 ```
 
-在Raspberry PI启动配置文件config.tx，文件最后面加入下面内容，指定从刚生成的kernel_new.img中启动。
+在Raspberry PI启动配置文件config.tx，文件最后面加入下面内容，指定从刚生成的kernel\_new.img中启动。
 
 `kernel=kernel_new.img`
 
@@ -150,12 +149,11 @@ sudo cp -rf /tmp/lib/modules /lib/modules`
 
 确认内核信息已经更新为新生成的kernel
 
-`uname -r
-4.9.77-v7+`
+`uname -r 4.9.77-v7+`
 
 安装后续所需依赖
 
-```
+```text
 `sudo apt-get update
 sudo apt-get install -y libusb-dev libdbus-1-dev libglib2.0-dev libudev-dev libical-dev libreadline-dev autotools-dev automake libtool`
 ```
@@ -168,7 +166,7 @@ sudo apt-get install -y libusb-dev libdbus-1-dev libglib2.0-dev libudev-dev libi
 
 编译并安装
 
-```
+```text
 `cd PATH_TO_JSON_C
 sh autogen.sh
 ./configure
@@ -180,14 +178,14 @@ sudo make install`
 
 从以下链接下载bluez-5.48.tar.gz，并解压到本地目录
 
-```
+```text
 `https://git.kernel.org/pub/scm/bluetooth/bluez.git
 tar xvf bluez-5.48.tar.gz`
 ```
 
 修改mesh gatt在处理数据分段时的逻辑，diff如下
 
-```
+```text
 `luwang@ubuntu:~/bluez$ git diff mesh/gatt.c
 diff --git a/mesh/gatt.c b/mesh/gatt.c
 index 9116a9d..8d564a9 100644
@@ -195,21 +193,21 @@ index 9116a9d..8d564a9 100644
 +++ b/mesh/gatt.c
 @@ -393,7 +393,10 @@ static bool pipe_read(struct io *io, bool prov, void *user_data)
                         break;
- 
+
                 res = buf;
    -               mesh_gatt_sar(&res, len);
    +               len = mesh_gatt_sar(&res, len);
    +                if (len == 0) {
    +                    break;
    +                }
- 
+
                 if (prov)
                         prov_data_ready(node, res, len);`
 ```
 
 编译安装
 
-```
+```text
 `cd PATH_TO_BLUEZ
 ./bootstrap
 ./configure --enable-mesh --enable-debug
@@ -219,11 +217,11 @@ sudo make install`
 
 ### Bluetooth controller
 
-Bluetooth controller使用的是zephyr的bluetooth/hci_uart应用，使用的分支branch是v1.10-branch。
+Bluetooth controller使用的是zephyr的bluetooth/hci\_uart应用，使用的分支branch是v1.10-branch。
 
 修改串口波特率为115200.
 
-```
+```text
 `luwang@ubuntu:~/zephyr/samples/bluetooth/hci_uart$ git diff nrf5.conf
 diff --git a/samples/bluetooth/hci_uart/nrf5.conf b/samples/bluetooth/hci_uart/nrf5.conf
 index 4a507be..9aea95f 100644
@@ -248,15 +246,14 @@ index 4a507be..9aea95f 100644
 
 编译生成Server端应用
 
-```
+```text
 `cd PATH_TO_AOS
 aos make bluetooth.blemesh_srv@esp32devkitc hci_h4=1`
 ```
 
 编译生成Client端应用
 
-`cd PATH_TO_AOS
-aos make bluetooth.blemesh_cli@esp32devkitc hci_h4=1`
+`cd PATH_TO_AOS aos make bluetooth.blemesh_cli@esp32devkitc hci_h4=1`
 
 将生成的镜像利用esptool烧录到ESP32.
 
@@ -268,7 +265,7 @@ aos make bluetooth.blemesh_cli@esp32devkitc hci_h4=1`
 
 在Raspberry PI上，运行并进入meshctl命令行
 
-```
+```text
 `pi@raspberrypi:~/bluez-5.48/mesh $ ./meshctl .
 Local config directory not provided.
   netkeys = 1
@@ -285,20 +282,20 @@ Service added /org/bluez/hci0/dev_EC_60_BA_B5_36_D0/service0006`
 
 server节点上电，并开启发现unprovisioned 设备模式，发现新unprovisioned设备
 
-```
+```text
 `[meshctl]# discover-unprovisioned on
 SetDiscoveryFilter success
 Discovery started
 Adapter property changed 
 [CHG] Controller B8:27:EB:B2:E7:4A Discovering: yes
-		Mesh Provisioning Service (00001827-0000-1000-8000-00805f9b34fb)
-			Device UUID: dddd0000000000000000000000000000
-			OOB: 0000`
+        Mesh Provisioning Service (00001827-0000-1000-8000-00805f9b34fb)
+            Device UUID: dddd0000000000000000000000000000
+            OOB: 0000`
 ```
 
 认证该设备
 
-```
+```text
 `[meshctl]# provision dddd
 Trying to connect Device EC:60:BA:B5:36:D0 AOS Device
 Adapter property changed 
@@ -317,34 +314,34 @@ Open-Prov: proxy 0x175a1c8
 Initiated provisioning
 Characteristic property changed /org/bluez/hci0/dev_EC_60_BA_B5_36_D0/service000a/char000b
 AcquireWrite success: fd 8 MTU 65
-GATT-TX:	 03 00 10 
-GATT-RX:	 03 01 01 00 01 00 00 04 00 08 00 00 00 
+GATT-TX:     03 00 10 
+GATT-RX:     03 01 01 00 01 00 00 04 00 08 00 00 00 
 Got provisioning data (12 bytes)
-	 01 01 00 01 00 00 04 00 08 00 00 00 
-GATT-TX:	 03 02 00 00 02 03 04 
-GATT-TX:	 03 03 09 da d3 a0 1e 4f 15 34 3c 1f 88 e2 1f 93 
-GATT-TX:	 f6 38 9b 8a 2d 3a a0 49 7a 0b 01 c6 5c 61 d9 cc 
-GATT-TX:	 49 be 26 78 5c 5c de c1 05 86 6f 5a 88 0d 93 b8 
-GATT-TX:	 60 e2 77 67 3d 72 f4 46 b4 5f d3 b1 87 53 cd 96 
-GATT-TX:	 fc ce 
-GATT-RX:	 43 03 d2 68 da 6f fe cc f8 97 0e 99 84 e6 eb 93 
-GATT-RX:	 15 15 aa 1d 15 5b 2a f2 e7 1f 4d c1 93 51 14 29 
-GATT-RX:	 7e b7 75 0c 8d 5a 51 c8 14 29 8d 3a 73 de fa 95 
-GATT-RX:	 09 42 7e 7f 0a be e2 ed e5 ff 27 43 26 f7 
-GATT-RX:	 c3 ab 8b ef 6f 
+     01 01 00 01 00 00 04 00 08 00 00 00 
+GATT-TX:     03 02 00 00 02 03 04 
+GATT-TX:     03 03 09 da d3 a0 1e 4f 15 34 3c 1f 88 e2 1f 93 
+GATT-TX:     f6 38 9b 8a 2d 3a a0 49 7a 0b 01 c6 5c 61 d9 cc 
+GATT-TX:     49 be 26 78 5c 5c de c1 05 86 6f 5a 88 0d 93 b8 
+GATT-TX:     60 e2 77 67 3d 72 f4 46 b4 5f d3 b1 87 53 cd 96 
+GATT-TX:     fc ce 
+GATT-RX:     43 03 d2 68 da 6f fe cc f8 97 0e 99 84 e6 eb 93 
+GATT-RX:     15 15 aa 1d 15 5b 2a f2 e7 1f 4d c1 93 51 14 29 
+GATT-RX:     7e b7 75 0c 8d 5a 51 c8 14 29 8d 3a 73 de fa 95 
+GATT-RX:     09 42 7e 7f 0a be e2 ed e5 ff 27 43 26 f7 
+GATT-RX:     c3 ab 8b ef 6f 
 Got provisioning data (65 bytes)
-	 03 d2 68 da 6f fe cc f8 97 0e 99 84 e6 eb 93 15 
-	 15 aa 1d 15 5b 2a f2 e7 1f 4d c1 93 51 14 29 7e 
-	 b7 75 0c 8d 5a 51 c8 14 29 8d 3a 73 de fa 95 09 
-	 42 7e 7f 0a be e2 ed e5 ff 27 43 26 f7 ab 8b ef 
-	 6f 
+     03 d2 68 da 6f fe cc f8 97 0e 99 84 e6 eb 93 15 
+     15 aa 1d 15 5b 2a f2 e7 1f 4d c1 93 51 14 29 7e 
+     b7 75 0c 8d 5a 51 c8 14 29 8d 3a 73 de fa 95 09 
+     42 7e 7f 0a be e2 ed e5 ff 27 43 26 f7 ab 8b ef 
+     6f 
 Request decimal key (0 - 9999)
 [AOS 1m[mesh] Enter Numeric key: `
 ```
 
 查看server命令行OOB输出
 
-```
+```text
 `Initializing...
 Bluetooth initialized
 Server
@@ -356,37 +353,37 @@ attention_off()`
 
 在Raspberry PI上键入9023，进行后续provision，后续会打印一长串log
 
-```
+```text
 `[AOS 1m[mesh] Enter Numeric key: 9023
-GATT-TX:	 03 05 fe 7f b1 04 84 f6 e9 0d 9e c7 62 19 6d 1f 
-GATT-TX:	 03 64 
-GATT-RX:	 03 05 ca f5 8e 55 ff 1d 92 86 26 fa 8e 22 8c 33 
-GATT-RX:	 69 80 
+GATT-TX:     03 05 fe 7f b1 04 84 f6 e9 0d 9e c7 62 19 6d 1f 
+GATT-TX:     03 64 
+GATT-RX:     03 05 ca f5 8e 55 ff 1d 92 86 26 fa 8e 22 8c 33 
+GATT-RX:     69 80 
 Got provisioning data (17 bytes)
-	 05 ca f5 8e 55 ff 1d 92 86 26 fa 8e 22 8c 33 69 
-	 80 
-GATT-TX:	 03 06 d6 63 cd 7c e6 3b b5 9b 2b a3 f5 3e e6 7c 
-GATT-TX:	 15 f1 
-GATT-RX:	 03 06 7a 94 aa 7a 3b f3 1c 33 92 cf 8a 3c 86 ec 
-GATT-RX:	 9d 0c 
+     05 ca f5 8e 55 ff 1d 92 86 26 fa 8e 22 8c 33 69 
+     80 
+GATT-TX:     03 06 d6 63 cd 7c e6 3b b5 9b 2b a3 f5 3e e6 7c 
+GATT-TX:     15 f1 
+GATT-RX:     03 06 7a 94 aa 7a 3b f3 1c 33 92 cf 8a 3c 86 ec 
+GATT-RX:     9d 0c 
 Got provisioning data (17 bytes)
-	 06 7a 94 aa 7a 3b f3 1c 33 92 cf 8a 3c 86 ec 9d 
-	 0c 
+     06 7a 94 aa 7a 3b f3 1c 33 92 cf 8a 3c 86 ec 9d 
+     0c 
 Confirmation Validated
-S-Key	 5e ee f5 44 72 cc 88 c7 3a 9a 56 db 11 4a d5 44 
-S-Nonce	 82 b4 a8 f2 7b 9b 76 c7 72 8b 3f e2 07 
-DevKey	 f8 a9 4d 78 25 b8 47 3d 0d 3d 20 50 91 45 db 20 
-Data	 18 ee d9 c2 a5 6a dd 85 04 9f fc 3c 59 ad 0e 12 
-Data	 00 00 00 00 00 00 05 01 00 
-DataEncrypted + mic	 b7 8a f4 17 c3 e8 05 66 84 4d d6 5e 22 69 73 1c 
-DataEncrypted + mic	 90 10 91 8c 5f f7 30 55 bf d1 1c 29 e9 d6 3e 78 
-DataEncrypted + mic	 f1 
-GATT-TX:	 03 07 b7 8a f4 17 c3 e8 05 66 84 4d d6 5e 22 69 
-GATT-TX:	 73 1c 90 10 91 8c 5f f7 30 55 bf d1 1c 29 e9 d6 
-GATT-TX:	 3e 78 f1 
-GATT-RX:	 03 08 
+S-Key     5e ee f5 44 72 cc 88 c7 3a 9a 56 db 11 4a d5 44 
+S-Nonce     82 b4 a8 f2 7b 9b 76 c7 72 8b 3f e2 07 
+DevKey     f8 a9 4d 78 25 b8 47 3d 0d 3d 20 50 91 45 db 20 
+Data     18 ee d9 c2 a5 6a dd 85 04 9f fc 3c 59 ad 0e 12 
+Data     00 00 00 00 00 00 05 01 00 
+DataEncrypted + mic     b7 8a f4 17 c3 e8 05 66 84 4d d6 5e 22 69 73 1c 
+DataEncrypted + mic     90 10 91 8c 5f f7 30 55 bf d1 1c 29 e9 d6 3e 78 
+DataEncrypted + mic     f1 
+GATT-TX:     03 07 b7 8a f4 17 c3 e8 05 66 84 4d d6 5e 22 69 
+GATT-TX:     73 1c 90 10 91 8c 5f f7 30 55 bf d1 1c 29 e9 d6 
+GATT-TX:     3e 78 f1 
+GATT-RX:     03 08 
 Got provisioning data (1 bytes)
-	 08 
+     08 
 Provision success. Assigned Primary Unicast 0100
 Attempting to disconnect from EC:60:BA:B5:36:D0
 Characteristic property changed /org/bluez/hci0/dev_EC_60_BA_B5_36_D0/service000a/char000d
@@ -400,8 +397,8 @@ Discovery started
 Adapter property changed 
 [CHG] Controller B8:27:EB:B2:E7:4A Discovering: yes
 
-		Mesh Proxy Service (00001828-0000-1000-8000-00805f9b34fb)
-		Identity for node 0100
+        Mesh Proxy Service (00001828-0000-1000-8000-00805f9b34fb)
+        Identity for node 0100
 Trying to connect to mesh
 Adapter property changed 
 [CHG] Controller B8:27:EB:B2:E7:4A Discovering: no
@@ -414,26 +411,26 @@ Characteristic property changed /org/bluez/hci0/dev_EC_60_BA_B5_36_D0/service000
 AcquireNotify success: fd 7 MTU 65
 Notify for Mesh Proxy Out Data started
 Trying to open mesh session
-GATT-RX:	 01 01 00 d4 76 79 43 3f db 10 4a 00 00 00 05 f4 
-GATT-RX:	 0a 41 fa b0 af 32 0b 
+GATT-RX:     01 01 00 d4 76 79 43 3f db 10 4a 00 00 00 05 f4 
+GATT-RX:     0a 41 fa b0 af 32 0b 
 iv_upd_state = IV_UPD_NORMAL
 Mesh session is open
 Characteristic property changed /org/bluez/hci0/dev_EC_60_BA_B5_36_D0/service000a/char000b
 AcquireWrite success: fd 8 MTU 65
-GATT-TX:	 02 f4 9e 64 99 fe 13 cd c8 9b 0e 1c e5 61 82 cc 
-GATT-TX:	 ab f5 83 70 
-GATT-TX:	 00 f4 b3 a6 53 65 b2 a0 cd 7a 74 9e 95 1d b7 13 
-GATT-TX:	 06 e6 48 68 d5 5c 
-GATT-RX:	 02 f4 e7 02 fe d4 84 81 a3 32 e7 6e 4b 1b 74 4a 
-GATT-RX:	 13 95 f5 61 7f eb 
+GATT-TX:     02 f4 9e 64 99 fe 13 cd c8 9b 0e 1c e5 61 82 cc 
+GATT-TX:     ab f5 83 70 
+GATT-TX:     00 f4 b3 a6 53 65 b2 a0 cd 7a 74 9e 95 1d b7 13 
+GATT-TX:     06 e6 48 68 d5 5c 
+GATT-RX:     02 f4 e7 02 fe d4 84 81 a3 32 e7 6e 4b 1b 74 4a 
+GATT-RX:     13 95 f5 61 7f eb 
 Proxy Whitelist filter length: 0
-GATT-RX:	 00 f4 60 4f af f8 ba 30 1f a6 70 d9 cb 5f 12 dd 
-GATT-RX:	 8b 0b 71 6b 68 ad 00 90 07 cf ec e0 28 fe 
-GATT-RX:	 00 f4 2a e4 87 bb f8 21 34 0d 45 4c c3 de 5b e3 
-GATT-RX:	 21 bb 57 9a 34 94 5a de 4d e8 ca c8 91 cd 
-GATT-RX:	 00 f4 b7 a0 67 ff da 92 a3 32 4c c2 c2 4e a5 5c 
-GATT-RX:	 7f 12 c7 5f 02 bc 0b 23 9f 13 
-	Composition data for node 0100 {
+GATT-RX:     00 f4 60 4f af f8 ba 30 1f a6 70 d9 cb 5f 12 dd 
+GATT-RX:     8b 0b 71 6b 68 ad 00 90 07 cf ec e0 28 fe 
+GATT-RX:     00 f4 2a e4 87 bb f8 21 34 0d 45 4c c3 de 5b e3 
+GATT-RX:     21 bb 57 9a 34 94 5a de 4d e8 ca c8 91 cd 
+GATT-RX:     00 f4 b7 a0 67 ff da 92 a3 32 4c c2 c2 4e a5 5c 
+GATT-RX:     7f 12 c7 5f 02 bc 0b 23 9f 13 
+    Composition data for node 0100 {
   "cid":"0002",
   "pid":"0000",
   "vid":"0000",
@@ -457,15 +454,15 @@ GATT-RX:	 7f 12 c7 5f 02 bc 0b 23 9f 13
     }
   ]
 }
-GATT-TX:	 00 f4 2b d6 e6 46 66 5b 65 31 1d 78 08 28 5d 16 
-GATT-TX:	 aa e2 97 b6 18 84 1f 29 7f `
+GATT-TX:     00 f4 2b d6 e6 46 66 5b 65 31 1d 78 08 28 5d 16 
+GATT-TX:     aa e2 97 b6 18 84 1f 29 7f `
 ```
 
 上述log分为两个阶段，第一个阶段是利用provisioning connection进行provision，第二个阶段是建立mesh proxy connection，后续需要在这个connection上传输网络配置信息。
 
 当上述log完整打印后，server端会打印provision成功完成的信息
 
-```
+```text
 `Provisioning completed!
 Net ID: 0
 Unicast addr: 0x0100`
@@ -475,7 +472,7 @@ Unicast addr: 0x0100`
 
 首先是进入菜单
 
-```
+```text
 `[AOS Devic-Node-0100]# menu config
 Menu config:
 Available commands:
@@ -490,7 +487,7 @@ bind <ele_idx> <app_idx> <mod_id> [cid]           Bind app key to a model
 ttl-set <ttl>                                     Set default TTL
 ttl-get                                           Get default TTL
 pub-set <ele_addr> <pub_addr> <app_idx> <per (step|res)> <re-xmt (cnt|per)> <mod id> [cid] 
-						  Set publication
+                          Set publication
 pub-get <ele_addr> <model>                        Get publication
 proxy-set <proxy>                                 Set proxy state
 proxy-get                                         Get proxy state
@@ -511,7 +508,7 @@ help                                              Display help about this progra
 
 选择配置节点，这里可以看到节点ucast addr是0x0100
 
-```
+```text
 [AOS Devic-Node-0100]# target 0100
 
 Configuring node 0100
@@ -521,68 +518,68 @@ Configuring node 0100
 
 配置app key
 
-```
+```text
 `[config: Target = 0100]# target 0100[config: Target = 0100]# appkey-add 1
-GATT-TX:	 00 f4 e5 ca a3 ba 03 7b db 7f a6 aa 7c 02 25 75 
-GATT-TX:	 6b 2a cf d4 93 0a 02 c3 8d 22 7d 30 ee 21 
-GATT-TX:	 00 f4 41 5a 17 27 bf 6f 70 59 1e 4e 60 2d be 4f 
-GATT-TX:	 1e f9 0d 88 e1 d6 c1 50 f3 51 cc 6d 43 d8 
-GATT-RX:	 00 f4 04 00 5a d6 cc af 78 b3 eb 70 e5 78 e9 1b 
-GATT-RX:	 87 fc 43 8c b0 ad 90 a2 7a 
-GATT-RX:	 00 f4 56 a5 24 11 02 10 62 67 45 42 77 77 3a 7a 
-GATT-RX:	 ec 3e 8f 2f 26 56 4f d3 ba 
+GATT-TX:     00 f4 e5 ca a3 ba 03 7b db 7f a6 aa 7c 02 25 75 
+GATT-TX:     6b 2a cf d4 93 0a 02 c3 8d 22 7d 30 ee 21 
+GATT-TX:     00 f4 41 5a 17 27 bf 6f 70 59 1e 4e 60 2d be 4f 
+GATT-TX:     1e f9 0d 88 e1 d6 c1 50 f3 51 cc 6d 43 d8 
+GATT-RX:     00 f4 04 00 5a d6 cc af 78 b3 eb 70 e5 78 e9 1b 
+GATT-RX:     87 fc 43 8c b0 ad 90 a2 7a 
+GATT-RX:     00 f4 56 a5 24 11 02 10 62 67 45 42 77 77 3a 7a 
+GATT-RX:     ec 3e 8f 2f 26 56 4f d3 ba 
 Node 0100 AppKey Status Success
-	NetKey 000, AppKey 001`
+    NetKey 000, AppKey 001`
 
 将server节点的element 0的sensor server model (0x1100)绑定到app key index =1的app key上
 
 `[config: Target = 0100]# bind 0 1 1100
-GATT-TX:	 00 f4 cb 2a f4 45 0f 4d 25 b0 47 d8 15 72 ba 89 
-GATT-TX:	 61 fc ec 15 7e fe 8c dc 30 e6 04 
-GATT-RX:	 00 f4 af 08 09 a9 12 03 dd fa df 1a 5f e4 7e c1 
-GATT-RX:	 4f c8 58 84 82 77 8c 62 d1 cb 59 f9 
+GATT-TX:     00 f4 cb 2a f4 45 0f 4d 25 b0 47 d8 15 72 ba 89 
+GATT-TX:     61 fc ec 15 7e fe 8c dc 30 e6 04 
+GATT-RX:     00 f4 af 08 09 a9 12 03 dd fa df 1a 5f e4 7e c1 
+GATT-RX:     4f c8 58 84 82 77 8c 62 d1 cb 59 f9 
 Node 0100 Model App Status Success
-	Element 0100 AppIdx 001
+    Element 0100 AppIdx 001
 ModelId 1100`
 ```
 
-增加sensor server model (0x1100)订阅发布地址0xc000的信息
+增加sensor server model \(0x1100\)订阅发布地址0xc000的信息
 
-```
+```text
 `[config: Target = 0100]# sub-add 0100 c000 1100
-GATT-TX:	 00 f4 fe fa 07 e1 60 7a 1a ac d1 26 3a 45 8e f7 
-GATT-TX:	 5e 8e ff 79 9d aa 90 10 ab b8 ef 
-GATT-RX:	 00 f4 a8 c7 92 53 ee 9e 15 c7 fb 47 3e e8 07 fb 
-GATT-RX:	 c4 ea 8a f7 2d 71 3a 33 da 12 e9 0f 
+GATT-TX:     00 f4 fe fa 07 e1 60 7a 1a ac d1 26 3a 45 8e f7 
+GATT-TX:     5e 8e ff 79 9d aa 90 10 ab b8 ef 
+GATT-RX:     00 f4 a8 c7 92 53 ee 9e 15 c7 fb 47 3e e8 07 fb 
+GATT-RX:     c4 ea 8a f7 2d 71 3a 33 da 12 e9 0f 
 
 Subscription changed for node 0100 status: Success
-Element Addr:	0100
-Subscr Addr:	c000
-Model ID:	1100`
+Element Addr:    0100
+Subscr Addr:    c000
+Model ID:    1100`
 ```
 
-设置sensor server model (0x1100)使用app key index = 1的app key发布信息，发布地址是0xc000，
+设置sensor server model \(0x1100\)使用app key index = 1的app key发布信息，发布地址是0xc000，
 
-```
+```text
 `[config: Target = 0100]# pub-set 0100 c000 1 0 0 1100
-GATT-TX:	 00 f4 d1 a1 54 ee 1b 9f 18 4e 3c 44 ab 57 f9 82 
-GATT-TX:	 73 41 9e 9c ab 3d 5c dd ad 27 c3 18 b7 22 
-GATT-TX:	 00 f4 d0 95 d8 43 e4 87 12 96 14 bf 52 55 5a 8a 
-GATT-TX:	 ad 00 b0 4c b4 46 
-GATT-RX:	 00 f4 34 4f 18 3f cf 94 bd 90 49 6a 6d 0e 83 78 
-GATT-RX:	 0c b8 7c 14 00 7e 3f b6 fa 
-GATT-RX:	 00 f4 66 8c 52 14 1b f9 b8 e2 d9 27 17 0d b0 87 
-GATT-RX:	 28 1a 12 65 e6 7f 36 b9 92 c2 c0 79 e8 2d 
-GATT-RX:	 00 f4 60 7b 6a a5 b6 9b d4 a2 f0 80 5b e6 9e 0b 
-GATT-RX:	 70 0c c9 34 a3 65 11 7f 
+GATT-TX:     00 f4 d1 a1 54 ee 1b 9f 18 4e 3c 44 ab 57 f9 82 
+GATT-TX:     73 41 9e 9c ab 3d 5c dd ad 27 c3 18 b7 22 
+GATT-TX:     00 f4 d0 95 d8 43 e4 87 12 96 14 bf 52 55 5a 8a 
+GATT-TX:     ad 00 b0 4c b4 46 
+GATT-RX:     00 f4 34 4f 18 3f cf 94 bd 90 49 6a 6d 0e 83 78 
+GATT-RX:     0c b8 7c 14 00 7e 3f b6 fa 
+GATT-RX:     00 f4 66 8c 52 14 1b f9 b8 e2 d9 27 17 0d b0 87 
+GATT-RX:     28 1a 12 65 e6 7f 36 b9 92 c2 c0 79 e8 2d 
+GATT-RX:     00 f4 60 7b 6a a5 b6 9b d4 a2 f0 80 5b e6 9e 0b 
+GATT-RX:     70 0c c9 34 a3 65 11 7f 
 
 Set publication for node 0100 status: Success
 Publication address: 0xc000
 Period: 0 ms
 Retransmit count: 0
 Retransmit Interval Steps: 0
-GATT-TX:	 00 f4 d2 0f fb e4 49 24 a0 6c 7d 34 a8 bd dc ca 
-GATT-TX:	 c6 a8 9f 17 d0 eb 5b 46 31 
+GATT-TX:     00 f4 d2 0f fb e4 49 24 a0 6c 7d 34 a8 bd dc ca 
+GATT-TX:     c6 a8 9f 17 d0 eb 5b 46 31 
 [config: Target = 0100]# `
 ```
 
@@ -590,7 +587,7 @@ GATT-TX:	 c6 a8 9f 17 d0 eb 5b 46 31
 
 在Raspberry PI上，运行并进入meshctl命令行
 
-```
+```text
 `pi@raspberrypi:~/bluez-5.48/mesh $ ./meshctl .
 Local config directory not provided.
   netkeys = 1
@@ -608,20 +605,20 @@ Service added /org/bluez/hci0/dev_EC_60_BA_B5_36_D0/service0006`
 
 client节点上电，并开启发现unprovisioned 设备模式，发现新unprovisioned设备
 
-```
+```text
 `[meshctl]# discover-unprovisioned on
 SetDiscoveryFilter success
 Discovery started
 Adapter property changed 
 [CHG] Controller B8:27:EB:B2:E7:4A Discovering: yes
-		Mesh Provisioning Service (00001827-0000-1000-8000-00805f9b34fb)
-			Device UUID: dddd0000000000000000000000000000
-			OOB: 0000`
+        Mesh Provisioning Service (00001827-0000-1000-8000-00805f9b34fb)
+            Device UUID: dddd0000000000000000000000000000
+            OOB: 0000`
 ```
 
 认证该设备
 
-```
+```text
 `[meshctl]# provision dddd
 Trying to connect Device D6:FB:47:4F:7E:A9 AOS Device
 Adapter property changed 
@@ -644,34 +641,34 @@ Open-Prov: proxy 0xe4c200
 Initiated provisioning
 Characteristic property changed /org/bluez/hci0/dev_D6_FB_47_4F_7E_A9/service000a/char000b
 AcquireWrite success: fd 8 MTU 65
-GATT-TX:	 03 00 10 
-GATT-RX:	 03 01 01 00 01 00 00 04 00 08 00 00 00 
+GATT-TX:     03 00 10 
+GATT-RX:     03 01 01 00 01 00 00 04 00 08 00 00 00 
 Got provisioning data (12 bytes)
-	 01 01 00 01 00 00 04 00 08 00 00 00 
-GATT-TX:	 03 02 00 00 02 03 04 
-GATT-TX:	 03 03 86 03 e8 b6 50 d7 4d 33 e3 fd aa c0 fa 46 
-GATT-TX:	 d5 1c a8 58 91 c1 4d de 96 30 26 8c a0 3c c3 5b 
-GATT-TX:	 c6 87 f4 e9 b9 08 a7 e7 2d 67 ae 3a 7c f7 1c 42 
-GATT-TX:	 6a da 6d 41 ba 77 17 69 25 a1 75 46 e5 eb 31 ee 
-GATT-TX:	 07 5d 
-GATT-RX:	 43 03 26 00 86 9a 35 54 40 b8 be 53 a0 88 e1 55 
-GATT-RX:	 19 33 ee f4 4d 03 35 12 59 6d a5 63 de a2 0a dc 
-GATT-RX:	 24 e4 a7 8a 8d 42 27 76 d8 2c a9 87 69 27 68 61 
-GATT-RX:	 2b 56 f8 97 3c a9 bf de b6 64 00 f5 77 91 
-GATT-RX:	 c3 73 3f 94 62 
+     01 01 00 01 00 00 04 00 08 00 00 00 
+GATT-TX:     03 02 00 00 02 03 04 
+GATT-TX:     03 03 86 03 e8 b6 50 d7 4d 33 e3 fd aa c0 fa 46 
+GATT-TX:     d5 1c a8 58 91 c1 4d de 96 30 26 8c a0 3c c3 5b 
+GATT-TX:     c6 87 f4 e9 b9 08 a7 e7 2d 67 ae 3a 7c f7 1c 42 
+GATT-TX:     6a da 6d 41 ba 77 17 69 25 a1 75 46 e5 eb 31 ee 
+GATT-TX:     07 5d 
+GATT-RX:     43 03 26 00 86 9a 35 54 40 b8 be 53 a0 88 e1 55 
+GATT-RX:     19 33 ee f4 4d 03 35 12 59 6d a5 63 de a2 0a dc 
+GATT-RX:     24 e4 a7 8a 8d 42 27 76 d8 2c a9 87 69 27 68 61 
+GATT-RX:     2b 56 f8 97 3c a9 bf de b6 64 00 f5 77 91 
+GATT-RX:     c3 73 3f 94 62 
 Got provisioning data (65 bytes)
-	 03 26 00 86 9a 35 54 40 b8 be 53 a0 88 e1 55 19 
-	 33 ee f4 4d 03 35 12 59 6d a5 63 de a2 0a dc 24 
-	 e4 a7 8a 8d 42 27 76 d8 2c a9 87 69 27 68 61 2b 
-	 56 f8 97 3c a9 bf de b6 64 00 f5 77 91 73 3f 94 
-	 62 
+     03 26 00 86 9a 35 54 40 b8 be 53 a0 88 e1 55 19 
+     33 ee f4 4d 03 35 12 59 6d a5 63 de a2 0a dc 24 
+     e4 a7 8a 8d 42 27 76 d8 2c a9 87 69 27 68 61 2b 
+     56 f8 97 3c a9 bf de b6 64 00 f5 77 91 73 3f 94 
+     62 
 Request decimal key (0 - 9999)
 [AOS 1m[mesh] Enter Numeric key:`
 ```
 
 查看server命令行OOB输出
 
-```
+```text
 `Initializing...
 Bluetooth initialized
 Mesh initialized
@@ -680,37 +677,37 @@ OOB Number: 4159`
 
 在Raspberry PI上键入4159，进行后续provision，后续会打印一长串log
 
-```
+```text
 `[AOS 1m[mesh] Enter Numeric key: 4159
-GATT-TX:	 03 05 20 2e 58 e4 b8 06 93 0d a2 b5 2f 7b eb 16 
-GATT-TX:	 99 07 
-GATT-RX:	 03 05 fd ee fd f5 3d 54 71 42 91 92 64 a4 69 46 
-GATT-RX:	 f7 bc 
+GATT-TX:     03 05 20 2e 58 e4 b8 06 93 0d a2 b5 2f 7b eb 16 
+GATT-TX:     99 07 
+GATT-RX:     03 05 fd ee fd f5 3d 54 71 42 91 92 64 a4 69 46 
+GATT-RX:     f7 bc 
 Got provisioning data (17 bytes)
-	 05 fd ee fd f5 3d 54 71 42 91 92 64 a4 69 46 f7 
-	 bc 
-GATT-TX:	 03 06 e6 4e 15 4c 75 e4 2d 76 d3 0b 13 64 91 f0 
-GATT-TX:	 ac e4 
-GATT-RX:	 03 06 54 65 35 17 f6 cb 77 bc ae af 19 8e 7c 92 
-GATT-RX:	 71 f3 
+     05 fd ee fd f5 3d 54 71 42 91 92 64 a4 69 46 f7 
+     bc 
+GATT-TX:     03 06 e6 4e 15 4c 75 e4 2d 76 d3 0b 13 64 91 f0 
+GATT-TX:     ac e4 
+GATT-RX:     03 06 54 65 35 17 f6 cb 77 bc ae af 19 8e 7c 92 
+GATT-RX:     71 f3 
 Got provisioning data (17 bytes)
-	 06 54 65 35 17 f6 cb 77 bc ae af 19 8e 7c 92 71 
-	 f3 
+     06 54 65 35 17 f6 cb 77 bc ae af 19 8e 7c 92 71 
+     f3 
 Confirmation Validated
-S-Key	 b4 dc cb 8f 1d 62 4e c4 95 f5 74 6d ff bc 42 d9 
-S-Nonce	 54 c1 e5 68 cf a6 ec c0 47 3b 8f f4 25 
-DevKey	 0c c5 26 e9 12 e3 d2 89 39 20 3a af 27 a4 f9 d2 
-Data	 18 ee d9 c2 a5 6a dd 85 04 9f fc 3c 59 ad 0e 12 
-Data	 00 00 00 00 00 00 05 01 01 
-DataEncrypted + mic	 80 bb ca b9 3f ca ff 49 5d 22 3c d3 5a 70 45 61 
-DataEncrypted + mic	 ae a4 a7 7b b6 15 b6 ed df 7c 47 8f 84 8d d4 dc 
-DataEncrypted + mic	 db 
-GATT-TX:	 03 07 80 bb ca b9 3f ca ff 49 5d 22 3c d3 5a 70 
-GATT-TX:	 45 61 ae a4 a7 7b b6 15 b6 ed df 7c 47 8f 84 8d 
-GATT-TX:	 d4 dc db 
-GATT-RX:	 03 08 
+S-Key     b4 dc cb 8f 1d 62 4e c4 95 f5 74 6d ff bc 42 d9 
+S-Nonce     54 c1 e5 68 cf a6 ec c0 47 3b 8f f4 25 
+DevKey     0c c5 26 e9 12 e3 d2 89 39 20 3a af 27 a4 f9 d2 
+Data     18 ee d9 c2 a5 6a dd 85 04 9f fc 3c 59 ad 0e 12 
+Data     00 00 00 00 00 00 05 01 01 
+DataEncrypted + mic     80 bb ca b9 3f ca ff 49 5d 22 3c d3 5a 70 45 61 
+DataEncrypted + mic     ae a4 a7 7b b6 15 b6 ed df 7c 47 8f 84 8d d4 dc 
+DataEncrypted + mic     db 
+GATT-TX:     03 07 80 bb ca b9 3f ca ff 49 5d 22 3c d3 5a 70 
+GATT-TX:     45 61 ae a4 a7 7b b6 15 b6 ed df 7c 47 8f 84 8d 
+GATT-TX:     d4 dc db 
+GATT-RX:     03 08 
 Got provisioning data (1 bytes)
-	 08 
+     08 
 Provision success. Assigned Primary Unicast 0101
 Attempting to disconnect from D6:FB:47:4F:7E:A9
 Characteristic property changed /org/bluez/hci0/dev_D6_FB_47_4F_7E_A9/service000a/char000d
@@ -724,8 +721,8 @@ Discovery started
 Adapter property changed 
 [CHG] Controller B8:27:EB:B2:E7:4A Discovering: yes
 
-		Mesh Proxy Service (00001828-0000-1000-8000-00805f9b34fb)
-		Identity for node 0101
+        Mesh Proxy Service (00001828-0000-1000-8000-00805f9b34fb)
+        Identity for node 0101
 Trying to connect to mesh
 Adapter property changed 
 [CHG] Controller B8:27:EB:B2:E7:4A Discovering: no
@@ -738,26 +735,26 @@ Characteristic property changed /org/bluez/hci0/dev_D6_FB_47_4F_7E_A9/service000
 AcquireNotify success: fd 7 MTU 65
 Notify for Mesh Proxy Out Data started
 Trying to open mesh session
-GATT-RX:	 01 01 00 d4 76 79 43 3f db 10 4a 00 00 00 05 f4 
-GATT-RX:	 0a 41 fa b0 af 32 0b 
+GATT-RX:     01 01 00 d4 76 79 43 3f db 10 4a 00 00 00 05 f4 
+GATT-RX:     0a 41 fa b0 af 32 0b 
 iv_upd_state = IV_UPD_NORMAL
 Mesh session is open
 Characteristic property changed /org/bluez/hci0/dev_D6_FB_47_4F_7E_A9/service000a/char000b
 AcquireWrite success: fd 8 MTU 65
-GATT-TX:	 02 f4 8c 6d ef 98 ac 2e 79 c8 e0 2c 83 2b 4a b4 
-GATT-TX:	 c9 1f e3 a9 
-GATT-TX:	 00 f4 95 a2 60 a7 67 ec a4 40 e9 18 1a 69 a4 00 
-GATT-TX:	 c1 54 c7 3d a9 d7 
-GATT-RX:	 02 f4 35 d1 c4 66 28 17 1b 6d ed 86 f9 26 19 ca 
-GATT-RX:	 d5 6f 3c 9e 7b cd 
+GATT-TX:     02 f4 8c 6d ef 98 ac 2e 79 c8 e0 2c 83 2b 4a b4 
+GATT-TX:     c9 1f e3 a9 
+GATT-TX:     00 f4 95 a2 60 a7 67 ec a4 40 e9 18 1a 69 a4 00 
+GATT-TX:     c1 54 c7 3d a9 d7 
+GATT-RX:     02 f4 35 d1 c4 66 28 17 1b 6d ed 86 f9 26 19 ca 
+GATT-RX:     d5 6f 3c 9e 7b cd 
 Proxy Whitelist filter length: 0
-GATT-RX:	 00 f4 98 0a 63 16 58 d9 d6 34 75 81 6d 7e a3 5f 
-GATT-RX:	 83 2f 1c 58 17 ad 23 17 7d 7b 50 ee 4e 61 
-GATT-RX:	 00 f4 cf 10 98 83 f6 b7 13 22 45 a0 6b 53 1b 51 
-GATT-RX:	 c8 35 4b a7 f4 0e f4 f3 d4 c2 0c 25 12 ec 
-GATT-RX:	 00 f4 a3 1e 00 1c 07 b8 e8 a6 9f 29 aa 84 7e eb 
-GATT-RX:	 ee 7a 7c 6b 13 63 37 ce 
-	Composition data for node 0101 {
+GATT-RX:     00 f4 98 0a 63 16 58 d9 d6 34 75 81 6d 7e a3 5f 
+GATT-RX:     83 2f 1c 58 17 ad 23 17 7d 7b 50 ee 4e 61 
+GATT-RX:     00 f4 cf 10 98 83 f6 b7 13 22 45 a0 6b 53 1b 51 
+GATT-RX:     c8 35 4b a7 f4 0e f4 f3 d4 c2 0c 25 12 ec 
+GATT-RX:     00 f4 a3 1e 00 1c 07 b8 e8 a6 9f 29 aa 84 7e eb 
+GATT-RX:     ee 7a 7c 6b 13 63 37 ce 
+    Composition data for node 0101 {
   "cid":"0002",
   "pid":"0000",
   "vid":"0000",
@@ -780,15 +777,15 @@ GATT-RX:	 ee 7a 7c 6b 13 63 37 ce
     }
   ]
 }
-GATT-TX:	 00 f4 71 66 e6 89 61 44 19 6b c1 75 a4 a9 b8 f2 
-GATT-TX:	 ed 9b b9 ee 99 b5 96 bc 05 `
+GATT-TX:     00 f4 71 66 e6 89 61 44 19 6b c1 75 a4 a9 b8 f2 
+GATT-TX:     ed 9b b9 ee 99 b5 96 bc 05 `
 ```
 
 上述log分为两个阶段，第一个阶段是利用provisioning connection进行provision，第二个阶段是建立mesh proxy connection，后续需要在这个connection上传输网络配置信息。
 
 当上述log完整打印后，server端会打印provision成功完成的信息
 
-```
+```text
 `Provisioning completed!
 Net ID: 0
 Unicast addr: 0x0101`
@@ -798,7 +795,7 @@ Unicast addr: 0x0101`
 
 首先是进入菜单
 
-```
+```text
 `[AOS Device-Node-0101]# menu config
 Menu config:
 Available commands:
@@ -813,7 +810,7 @@ bind <ele_idx> <app_idx> <mod_id> [cid]           Bind app key to a model
 ttl-set <ttl>                                     Set default TTL
 ttl-get                                           Get default TTL
 pub-set <ele_addr> <pub_addr> <app_idx> <per (step|res)> <re-xmt (cnt|per)> <mod id> [cid] 
-						  Set publication
+                          Set publication
 pub-get <ele_addr> <model>                        Get publication
 proxy-set <proxy>                                 Set proxy state
 proxy-get                                         Get proxy state
@@ -834,7 +831,7 @@ help                                              Display help about this progra
 
 选择配置节点，这里可以看到节点ucast addr是0x0101
 
-```
+```text
 `[AOS Device-Node-0101]# target 0101
 Configuring node 0101
 [config: Target = 0101]# target 0101[config: Target = 0101]#`
@@ -842,75 +839,75 @@ Configuring node 0101
 
 配置app key
 
-```
+```text
 `[config: Target = 0101]# target 0101[config: Target = 0101]# appkey-add 1
-GATT-TX:	 00 f4 2b 37 95 64 e7 fe ba 41 b3 c8 d9 0c f4 0c 
-GATT-TX:	 76 36 a4 f0 f9 c4 f8 93 73 8a 3d 7d 7e c1 
-GATT-TX:	 00 f4 43 6e 87 5d 09 0b 4b 05 a0 1b c0 48 da a1 
-GATT-TX:	 bf d6 9b 21 91 68 d8 b0 b4 27 57 90 61 06 
-GATT-RX:	 00 f4 7f d6 9d 40 6d bc 10 5f 41 67 68 56 9c d8 
-GATT-RX:	 b9 77 dc 71 b5 10 ec b1 85 
-GATT-RX:	 00 f4 81 91 ee 63 66 b4 5a 42 6f 70 f6 d2 12 93 
-GATT-RX:	 2d 9f 21 2d fa a3 89 2f 4b 
+GATT-TX:     00 f4 2b 37 95 64 e7 fe ba 41 b3 c8 d9 0c f4 0c 
+GATT-TX:     76 36 a4 f0 f9 c4 f8 93 73 8a 3d 7d 7e c1 
+GATT-TX:     00 f4 43 6e 87 5d 09 0b 4b 05 a0 1b c0 48 da a1 
+GATT-TX:     bf d6 9b 21 91 68 d8 b0 b4 27 57 90 61 06 
+GATT-RX:     00 f4 7f d6 9d 40 6d bc 10 5f 41 67 68 56 9c d8 
+GATT-RX:     b9 77 dc 71 b5 10 ec b1 85 
+GATT-RX:     00 f4 81 91 ee 63 66 b4 5a 42 6f 70 f6 d2 12 93 
+GATT-RX:     2d 9f 21 2d fa a3 89 2f 4b 
 Node 0101 AppKey Status Success
-	NetKey 000, AppKey 001`
+    NetKey 000, AppKey 001`
 ```
 
-将client节点的element 0的sensor client model (0x1102)绑定到app key index =1的app key上
+将client节点的element 0的sensor client model \(0x1102\)绑定到app key index =1的app key上
 
-```
+```text
 `[config: Target = 0101]# bind 0 1 1102
-GATT-TX:	 00 f4 97 c8 22 ee 6f 11 c3 c6 7c 5c 4f 88 e4 3d 
-GATT-TX:	 36 9e 19 c7 3f a8 f3 d3 d4 7d 90 
-GATT-RX:	 00 f4 e9 e9 33 90 5a f3 cb 88 c1 3e 44 af f6 61 
-GATT-RX:	 d0 ef 47 35 35 c3 03 8a c9 43 01 7d 
+GATT-TX:     00 f4 97 c8 22 ee 6f 11 c3 c6 7c 5c 4f 88 e4 3d 
+GATT-TX:     36 9e 19 c7 3f a8 f3 d3 d4 7d 90 
+GATT-RX:     00 f4 e9 e9 33 90 5a f3 cb 88 c1 3e 44 af f6 61 
+GATT-RX:     d0 ef 47 35 35 c3 03 8a c9 43 01 7d 
 Node 0101 Model App Status Success
-	Element 0101 AppIdx 001
+    Element 0101 AppIdx 001
 ModelId 1102`
 ```
 
-增加sensor client model (0x1102)订阅发布地址0xc000的信息
+增加sensor client model \(0x1102\)订阅发布地址0xc000的信息
 
-```
+```text
 `[config: Target = 0101]# sub-add 0101 c000 1102
-GATT-TX:	 00 f4 c5 5e 47 70 42 84 3b 28 14 26 60 83 01 69 
-GATT-TX:	 7c 25 c3 c2 d9 1d d3 fb c0 e5 65 
-GATT-RX:	 00 f4 6f 71 02 d9 ec 00 cf c1 96 f0 3a 7f ea a9 
-GATT-RX:	 b1 fb 6d 70 31 62 d8 d0 4b 5d 81 a6 
+GATT-TX:     00 f4 c5 5e 47 70 42 84 3b 28 14 26 60 83 01 69 
+GATT-TX:     7c 25 c3 c2 d9 1d d3 fb c0 e5 65 
+GATT-RX:     00 f4 6f 71 02 d9 ec 00 cf c1 96 f0 3a 7f ea a9 
+GATT-RX:     b1 fb 6d 70 31 62 d8 d0 4b 5d 81 a6 
 
 Subscription changed for node 0101 status: Success
-Element Addr:	0101
-Subscr Addr:	c000
-Model ID:	1102`
+Element Addr:    0101
+Subscr Addr:    c000
+Model ID:    1102`
 ```
 
-设置sensor client model (0x1102)使用app key index = 1的app key发布信息，发布地址是0xc000，
+设置sensor client model \(0x1102\)使用app key index = 1的app key发布信息，发布地址是0xc000，
 
-```
+```text
 `[config: Target = 0101]# pub-set 0101 c000 1 0 0 1102
-GATT-TX:	 00 f4 5a 22 c5 d2 d0 76 94 a9 7f 70 6e 64 c1 f3 
-GATT-TX:	 be 58 43 fc f1 61 f0 ac dc ce 4d 0b 9c f1 
-GATT-TX:	 00 f4 1a 8a af 58 92 d2 d5 38 b2 0f 62 56 34 96 
-GATT-TX:	 5f 08 9e 5a c6 54 
-GATT-RX:	 00 f4 eb 12 ea 4f 6f 1f f8 e6 f2 92 c4 d7 82 a0 
-GATT-RX:	 ad 9e c9 92 9e 91 d4 a6 3c 
-GATT-RX:	 00 f4 2a 11 82 c6 86 27 0a 4a 88 bf a6 02 74 56 
-GATT-RX:	 d5 2d 28 72 24 cd ae 91 fa dc 72 35 d7 be 
-GATT-RX:	 00 f4 a7 08 14 6c 95 bd 62 07 67 1b c6 c8 95 b8 
-GATT-RX:	 f2 a9 3b 03 d2 82 d1 97 
+GATT-TX:     00 f4 5a 22 c5 d2 d0 76 94 a9 7f 70 6e 64 c1 f3 
+GATT-TX:     be 58 43 fc f1 61 f0 ac dc ce 4d 0b 9c f1 
+GATT-TX:     00 f4 1a 8a af 58 92 d2 d5 38 b2 0f 62 56 34 96 
+GATT-TX:     5f 08 9e 5a c6 54 
+GATT-RX:     00 f4 eb 12 ea 4f 6f 1f f8 e6 f2 92 c4 d7 82 a0 
+GATT-RX:     ad 9e c9 92 9e 91 d4 a6 3c 
+GATT-RX:     00 f4 2a 11 82 c6 86 27 0a 4a 88 bf a6 02 74 56 
+GATT-RX:     d5 2d 28 72 24 cd ae 91 fa dc 72 35 d7 be 
+GATT-RX:     00 f4 a7 08 14 6c 95 bd 62 07 67 1b c6 c8 95 b8 
+GATT-RX:     f2 a9 3b 03 d2 82 d1 97 
 
 Set publication for node 0101 status: Success
 Publication address: 0xc000
 Period: 0 ms
 Retransmit count: 0
 Retransmit Interval Steps: 0
-GATT-TX:	 00 f4 f0 60 6a 70 db 3b e2 60 a6 c8 50 d9 03 36 
-GATT-TX:	 d5 a1 47 c9 2f 25 49 5e 47`
+GATT-TX:     00 f4 f0 60 6a 70 db 3b e2 60 a6 c8 50 d9 03 36 
+GATT-TX:     d5 a1 47 c9 2f 25 49 5e 47`
 ```
 
 上述配置全部完成后，可以在client节点看到周期性发送温度请求信息和收到回复的log
 
-```
+```text
 `Sensor status Get request sent with OpCode 0x00008231
 Got the sensor status 
 Sensor ID: 0x2a1f
@@ -919,7 +916,8 @@ Temperature value: 27`
 
 在server节点可以看到周期性接收到温度请求和发送回复的log
 
-```
+```text
 `Sensor Status Get request received
 Sensor status sent with OpCode 0x00000052`
 ```
+

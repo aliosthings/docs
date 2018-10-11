@@ -19,3 +19,4 @@ EMW3060是上海庆科（MXCHIP）推出的高性价比嵌入式W-Fi模块，高
 基于乐鑫最先进的 SoC，ESP-WROOM-32 模组具备高性能和丰富的外设，集成了 Wi-Fi 和蓝牙功能，为先进的物联网应用提供了高度集成的解决方案。
 
 [了解更多](https://www.espressif.com/en/products/hardware/esp-wroom-32/overview)
+

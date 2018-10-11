@@ -2,13 +2,14 @@
 
 邮箱 `aliosthings@service.aliyun.com`
 
-<div>{{ msg }}</div>
+{{ msg }}
 
-<script>
-  new Vue({
-    el: '#main',
-    data: {
-      msg: 'Stay hungry, stay foolish!'
-    }
-  })
-</script>
+  
+  new Vue\({  
+    el: '\#main',  
+    data: {  
+      msg: 'Stay hungry, stay foolish!'  
+    }  
+  }\)  
+
+
