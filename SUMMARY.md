@@ -1,10 +1,6 @@
 # Table of contents
 
-* [README](README.md)
-
-## 介绍
-
-* [AliOS Things 简介](introduction/alios-things-shi-shen-me.md)
+* [简介](README.md)
 
 ## 快速开始
 
