@@ -1,245 +1,212 @@
-# Technical Overview
+# 技术架构总览
 
-AliOS Things is Alibaba's IoT version of AliOS Family, it was announced in [2017 The Computing Conference ](https://yunqi.aliyun.com) in Hangzhou by Alibaba Cloud, and open sourced in 20<sup>th</sup>, October, 2017 at [GitHub](https://github.com/alibaba/AliOS-Things).
+[AliOS Things](https://github.com/alibaba/AliOS-Things) 是一款由阿里巴巴开发的轻量级物联网操作系统。它在2017年杭州云栖大会中问世，并在同年10月20号于[GitHub](https://github.com/alibaba/AliOS-Things)开源。
 
-## Architecture Overview
+## 架构概述
 
-In terms of architecture, AliOS Things adapts Layered Architecture and Component Architecture. From bottom to top, AliOS Things includes:
+AliOS Things的架构可以适用于分层架构和组件化架构。从底部到顶部，AliOS Things包括：
 
-- BSP: Board Support Package mainly developed and maintained by SoC vendors
-- HAL: Hardware Abstraction Layer, like WiFi, UART
-- Kernel: Rhino RTOS Kernel, Yloop, VFS, KV Storage included
-- Protocol Stack: LwIP TCPIP Stack, uMesh mesh networking stack included
-- Security: TLS, TFS(Trusted Framework Service), TEE(Trusted Exexcution Environment)
-- AOS API: AliOS Things exposed APIs for Applications and Middlewares
-- Middleware: Alibaba's value-added and commonly seen IoT components included
-- Examples: hands-on sample codes, and well tested applications such as Alinkapp
+- 板级支持包（BSP）：主要由SoC供应商开发和维护
+- 硬件抽象层（HAL）：比如WiFi和UART
+- 内核：包括Rhino实时操作系统内核、Yloop, VFS, KV 存储
+- 协议栈：包括TCP/IP协议栈（LwIP），uMesh网络协议栈
+- 安全：安全传输层协议（TLS），可信服务框架（TFS）、可信运行环境（TEE）
+- AOS API：提供可供应用软件和中间件使用的API
+- 中间件：包括常见的物联网组件和阿里巴巴增值服务中间件
+- 示例应用：阿里自主开发的示例代码，以及通过了完备测试的应用程序（比如Alinkapp）
 
-All modules have been organized as components, and each component has its own .mk file to describe its dependency with other components, which enables applications to choose components they need easily.
+所有的模组都已经被组织成组件，且每个组件都有自己的.mk文件，用于描述它和其它组件间的依赖关系，方便应用开发者按需选用。 
 
-### Block Diagram
-
----
-
-![](https://img.alicdn.com/tfs/TB1FGaqw0knBKNjSZKPXXX6OFXa-2600-2200.png)
-
-### Folder structure
+### 结构框图
 
 ---
 
-| Folder Name | Description                              |
-| ----------- | ---------------------------------------- |
-| board       | evaluation board such as STM32L496G-Discovery |
-| build       | build infrastructure                     |
-| device      | peripherals connected to MCU/SoC, such as Serial WiFi Module utilizing AT |
-| example     | hands-on sample codes, well tested industry application such as alinkapp |
-| framework   | IoT common components                    |
-| include     | system include headers                   |
-| kernel      | including Rhino, Protocol Stack          |
-| platform    | including arch holding cpu related files, mcu holding SoC special files |
-| security    | security components including TLS/TFS/TEE |
-| tools       | cli and testbed for constructing remote device center |
-| utility     | IoT common libraries such as cjson       |
-| test        | UT testcases                             |
+![](https://img.alicdn.com/tfs/TB16Sl8aHPpK1RjSZFFXXa5PpXa-2600-2200.png)
 
-## Kernel
-
-### Rhino RTOS Kernel
+### 文件夹结构
 
 ---
 
-Rhino is in-house designed and developed by AliOS Things team. It is characterized by ultra-small footprint, low power consumption, real time, multitasking, and debug features.
+| 文件夹名称     | 内容描述                             |
+| --------- | -------------------------------- |
+| board     | 评估板（如STM32L496G-Discovery）       |
+| build     | 编译框架                             |
+| device    | 连接MCU/SoC的外设，比如支持使用AT命令的WiFi系列模组 |
+| example   | 代码示例，通过了完备测试的应用程序（比如Alink）       |
+| framework | IoT 通用组件                         |
+| include   | 系统头文件                            |
+| kernel    | 包括Rhino和协议栈                      |
+| platform  | 芯片架构支持的相关文件                      |
+| security  | 包括TLS，TFS， TEE在内的安全组件            |
+| tools     | 命令行界面（CLI）和用于建立远程设备中心的testbed工具  |
+| utility   | IoT通用软件库，比如 cJSON                |
+| test      | UT测试用例                           |
 
-Rhino provides rich kernel primitives including buffer queue, ring buffer, timer, semaphore, mutex, fifo, event, etc.
+## 内核
 
-#### Small footprint
+### Rhino 实时操作系统内核 
 
-Rhino provides both static and dynamic allocation for most of the kernel objects. A memory allocator designed for small memory block management can support both fixed block and variable block. It can also support multiple memory region.
+Rhino是AliOS Things内部设计和开发的实时操作系统。它具有体积小、功耗低、实时性强和调试方便等特点。Rhino提供了丰富多元的内核原语，包括缓冲队列，环形缓冲区、定时器、信号量、互斥量、先入先出队列、事件等。
 
-Most of the kernel features such as work queue and memory allocator could be scalable and configurable by modifying the file named k_config.h.
+#### 体积小
 
-With the ability to scale component in and out, Rhino could make the final image as small as possible, which could be programmed into device with very small flash size.
+Rhino为大多数内核对象提供静态和动态分配。为小内存块设计的内存分配器既支持固定块又支持可变块，它还可以支持多个内存区域。
 
-#### Low power consumption
+大部分的内核特性，如work queue，和内存分配器，都可以通过修改k_config.h文件进行配置和裁剪。
 
-For the IoT devices, it’s important to consider the power consumption for hardware because the battery capacity is limited. The faster the system consumes the power, the shorter its live time will be. Rhino kernel provides tickless idle mode for CPU to help system save the power and extend its battery life.
+由于组件可配置和可裁剪，可以让最终编译出的Rhino镜像尽可能小，使其可以被烧录进资源非常有限的设备中。
 
-Normally, when CPU has nothing to do, it will execute a native instruction of the processor (WFI for ARM, HLT for IA32-bit processors) to enter a low power state, when the CPU register context is maintained, and system tick clock interrupts wakes up the CPU at every tick moment.
+#### 功耗低
 
-To save more power than normal, Rhino kernel provides tickless idle mode for CPU. When OS detects there is nothing to do in feature within a fixed duration (multiple ticks or longer), it is called tickless idle time. At that time, the system tick clock is programmed to fire interrupt and put CPU into C1 state(CPU execute a native instruction, WFI for ARM, HLT for IA 32-bit processors). From then on, there won't be system tick clock interrupt any more. The system tick count will stop increasing and CPU maintain low power mode(C1) until tickless idle time passes, when the system tick timer interrupt is fired again to wake up CPU from C1 to C0 state, and passed ticks is compensated to system tick count.
+对于物联网设备来说，硬件功率至关重要，因为电量是有限的。如果系统消耗电量过快，它将很快没电。Rhino提供了CPU的tickless idle 模式来帮助系统节约电能和延长使用时间。
 
-#### Real time
+通常情况下，当CPU没有执行操作时，它将执行一个处理器指令（对于ARM来说的WFI，对于IA32位处理器来说的HLT），进入低功耗状态。此时，CPU寄存器的信息被保存，系统的tick clock interrupts会在每个tick时刻唤醒CPU。
 
-Rhino provides two scheduling policies, priority-based/preemptive scheduling and round-robin scheduling. For both scheduling policies, the highest priority task is always preferred for scheduling.
+为了比正常模式节省更多的电量，Rhino为CPU提供了tickless idle模式。当操作系统检测到有一个固定时间（多个ticks或更长时间）的空闲后，它将进入tickless idle模式。系统做好中断配置，并把CPU置于C1模式，那时system tick clock中断不再被触发，system tick的计数也将停止。CPU会保持低耗电状态直到tickless idle时间结束。然后，当system tick timer interrupt再次被触发时，唤醒CPU从C1模式回到C0模式，为ticks计算好补偿时间并继续计数。
 
-A priority-based preemptive scheduler preempts the CPU when a task has a higher priority than the current task running. This means that if a task with a higher priority than that of the current task becomes ready to run, the kernel will immediately save the current task's context, and switch to the context of the higher priority task. Thus, the kernel ensures that the CPU is always allocated to the highest priority task that is ready to run. 
+#### 实时性
 
-A round-robin scheduler shares the CPU amongst these tasks by using time-slicing. Each task in a group of tasks with the same priority is arranged to execute for a defined interval, or time slice, before relinquishing the CPU to the next task in the group. None of them, therefore, can usurp the processor until it is blocked. When the time slice expires, the task moves to the last one in the ready queue list for that priority.
+Rhino提供了两个调度策略，基于优先级的抢占式调度和round-robin循环调度策略。对于两个调度策略而言，具有最高优先级的任务都是被优先处理的。
 
-#### Debug features
+基于优先级的抢占式调度器会在遇到比当前运行的任务具有更高优先级任务时抢占CPU。这意味着，如果出现一个任务比当前任务具有更高优先级，内核将立即保存当前任务的context，并切换到高优先级的任务的context。因此，内核保证CPU总是优先处理优先级最高的任务。
 
-Rhino can support stack overflow, memory leak, memory corruption detection which helps developer figure out root cause of difficult issues. Cooperating with AliOS Studio IDE, Rhino's trace function help visualize overall system activities.
+round-robin调度器通过时间片来为各任务分配CPU资源。在一组具有相同优先级的任务中，每个任务都会被安排运行一个固定的时间长度，或者说时间片，之后CPU将处理下一个任务。所以，在一个任务阻塞之前，其他任务不能抢夺到处理器资源。当时间片失效时，系统将运行该优先级就绪队列中的最后一个任务。
 
-### Yloop event framework
+#### 方便调试
 
----
+Rhino 可以支持stack溢出、内存泄漏、内存损坏的检测，这有助于开发人员找出棘手问题的根源。结合AliOS Studio的集成开发环境（IDE），Rhino的追踪功能将实现整个系统运行活动的可视化。
 
-Yloop is an asynchronous event framework, highly considering [libuv](https://github.com/libuv/libuv) and event loop used in Embedded world. Yloop provides a mechanism to handle IO(mainly socket), timer, system events, user events in a single task, which greatly reduces memory usage while avoiding the complexity of multi-threading programming.
+### Yloop 事件架构
 
-Yloop instance is bound to task context. Multiple Yloop instances can also be created, and each is bound to a single task, so that more performance can be achieved in powerful hardware.
+Yloop是[AliOS Things](https://github.com/alibaba/AliOS-Things)的异步事件框架。借鉴了[libuv](https://github.com/libuv/libuv)及嵌入式业界常见的event loop，综合考虑使用复杂性，性能，及footprint，实现了一个适合于MCU的事件调度机制。Yloop提供了一套机制来统一调度管理IO（主要是socket），定时器，执行函数和事件，在大大降低了内存的使用的同时，避免了多线程编程的复杂性。
 
-### KV
+每个Yloop实例（aos_loop_t）与特定的任务上下文绑定。主任务以外的任务也可以创建自己的Yloop实例。多Yloop实例也可以被创建，其中每个instance都被绑定到一个单一的任务，让强大的硬件获得更好的性能。
 
----
+### 键值对存储（KV）
 
-Designed for flash especially NOR Flash:
+KV组件是AliOS Things中一个以Key-Value方式进行持久化存储的轻量级组件，主要为基于Nor Flash的小型MCU设备提供通用的Key-Value持久化存储接口。它的优势和特征包括：
 
-- much less erase times to extend flash life
-- power safe, no middle-state status will exist
-- key-value friendly usage, value supports binary format data
-- minimum supported flash size is 8KB
+- 更少的擦写次数来延长flash的使用寿命
+- 电源安全，没有中间状态将存在
 
-### Protocol Stack
+- 方便使用，关键码值支持二进制格式数据
+- 最低支持Flash的大小是8KB
 
----
+### 协议栈
 
-To help device connect to cloud more easily, AliOS Things provide protocol stacks in flexible ways.
+为了帮助设备更容易地连接到云端，AliOS Things通过灵活的方式提供协议栈。
 
-For IP oriented devices:
+面向IP设备：
 
-- a well-tested LwIP stack is provided for directly connected SoCs, including WiFi Soc, MCU+SDIO/SPI WiFi Module, etc.
-- SAL(Socket Adapter Layer) for MCU attached with serial communication modules such as WiFi/NB/GPRS.
-- uMesh for building more complex, mesh networking topology
+- 为直接连接的SoC提供了测试良好的LwIP协议栈，包括WiFi SoC，MCU+SDIO/SPI WiFi模块等。
 
-For non-IP devices:
-
-- LoRaWAN stack is integrated
-- BLE standard APIs, and BLE Stack
-
-LoRaWAN and BLE Stack will be integrated in the near future.
-
-### LwIP
-
----
-
-AliOS Things maintains a TCP/IP stack based on LwIP v2.0.0, and support IPv4 Only, IPv6 Only, IPv4&IPv6 Coexist. IPv4 and IPv6 are well tested in daily CI, and IPv6 is widely used and tested in uMesh.
-
-### SAL(Socket Adapter Layer)
-
----
-
-SAL is to provide standard Socket capabilities with serial WiFi/GPRS/NB-IoT modules. Specifically, considering that AT Command is the most popular form in this scenario, a AT Parser is provided to help handling AT.
-
-With SAL, developers can use common Socket APIs to access network, which will reduce the efforts to integrate existing software components.
-
-### uMesh
-
----
-
-uMesh is a mesh implementation with following features:
-
-- RF standards independent, currently support 802.11/802.15.4/BLE, and more can be supported
-- Routing mesh, support Tree Topology, Mesh Topology and Layered Tree&Mesh Topology
-- Self-healing, no single point of failures
-- Low Power Mode
-- EAP(Extensible Authentication Protocol) with ID<sup>2</sup>
-- Seamless IPv4/IPv6 integration providing Socket programming environment 
+- 为连接了通信模块（如WiFi，NB，GPRS）的MCU提供了SAL
+- 提供uMesh去构建更复杂的网状网络拓扑
 
 
+对于非IP设备：
 
-## Security
+- LoRaWAN协议栈已经集成到系统中
 
-### TLS
+- 提供BLE标准的API和BLE 协议栈
 
----
 
-Inherited from mbedtls, highly optimized for footprint. 
+在不久的将来，LoRaWAN和BLE将被集成。
 
-### TFS(Trusted Framework Service)
+### TCP / IP协议栈（LwIP）
 
----
+AliOS Things拥有一个基于LwIP V2.0.0 的TCP/IP协议栈，支持IPv4，IPv6，IPv4和IPv6的共存。IPv4和IPv6已经在持续集成（CI）系统中经过良好测试，IPv6也已经在uMesh中被广泛应用和测试。
 
-Framework for accessing most of the security services such as ID<sup>2</sup>.
+### 套接字适配层(SAL)
 
-### ID<sup>2</sup>(Internet Device ID)
+SAL为 WiFi/GPRS/NB-IoT系列模组提供了标准的Socket功能。特别地，考虑到AT命令是这个场景中最流行的形式，提供了AT Parser来帮助处理。
 
-Trusted identity for Internet of things device.
+有了SAL，开发人员可以使用标准的Socket API访问网络，这将减少现有软件组件的集成工作。
 
-### KM(Key Management)
+### 自组织网络协议(uMesh)
 
----
+uMesh是一个具有如下特征的mesh：
 
-Providing runtime Root of Trust through using security capabilities of hardware.
+- 无缝支持IPv4 和IPv6
+- RF标准独立，支持WiFi，BLE， 802.11和802.15.4等通信媒介
+- 支持不同通信媒介间的异构组网
+- 支持树状拓扑，网状拓扑和分层树状网格拓扑
+- 支持低功耗特性
+- 使用ID2对设备进行认证，AES-128对数据进行加密
+
+## 安全性
+
+### 安全传输层协议（TLS）
+
+继承于mbedtls, 对footprint进行了高度优化
+
+### 信任框架服务（TFS）
+
+可以对接大部分安全服务（比如 ID²）的框架
+
+### 网络设备ID（ID²）
+
+可信的IoT设备身份属性
+
+### 密钥管理（KM）
+
+通过使用硬件的安全功能提供可信的 runtime Root 
 
 ### Ali-Crypto
 
----
+提供经典算法实现
 
-Providing classical algorithms implementation.
+### 可信执行环境（TEE）
 
-### TEE(Trusted Execution Environment)
+提供完整的可信执行环境，现可支持C-Sky CK802T，不久的将来可支持ARMV8-M。
 
----
+## 中间组件
 
-Providing total TEE soulution. C-Sky CK802T architecture has been supported, and ARMV8-M will be supported in the near feature. 
+### 空中固件升级（FOTA）
 
-## Middleware Components
+FOTA 使设备固件更新容易。AliOS Things可根据硬件配置给出FOTA解决方案，提供端到端的解决方案。
 
-### FOTA
+特征:
 
----
+- 支持丰富的物联网协议 (Alink，MQTT ，COAP）
 
-FOTA (Firmware Over Tth Air) enables device firmwares to update easily. AliOS Things provides customized FOTA solutions according to hardware configuration. Working with Alibaba Cloud services, AliOS Things provides end-to-end solutions.
+- 支持HTTP / HTTPS / COAP固件下载
 
-Features:
+- 支持多bin、delta和A／B更新
 
-- supports rich IoT Protocols(Alink/MQTT/CoAP)
-- support http/https/CoAP firmware download
-- support multiple bin, delta and A/B update
-- provide OTA HAL to make porting easily
+- 提供OTA HAL方便进入端口
 
 ### uData
 
----
+uData框架是基于传统Sensor Hub概念，结合IoT的业务场景和AliOS Things物联网操作系统的特点设计而成的一个面对IoT的感知设备处理框架。
 
-uData is a specific software framework for IoT smart services based on a series of sensors, and has a general name of Sensor Hub traditionally. 
+uData框架主要分kernel和framework两层，kernel层主要是负责传感器驱动，硬件端口配置和相关的静态校准，包括轴向校准等；framework层主要是负责应用服务管理、动态校准管理和对外模块接口等。
 
-There are two parts in the uData Framework. One is in the framework layer including uData service manager, service algo, abstact model(abs), and the other is in the kernel layer providing the sensor driver SDK. 
+uData的目标范围服务是物联网商业服务，像无人机玩具、智能路灯、扫地机器人等。传感器驱动程序不仅能提供传感器SDK，还能提供传感器驱动像ALS，气压计，温度，加速度计，陀螺仪，磁力计等。
 
-The target scope of uData service will focus on the IoT business like drone toy, smart street lamp, sweeper robot and so on. The sensor drivers will not only provide the sensor SDK, but also sensor drivers like ALS, Barometer,temperature, accelerometer, gyro, magnetometer, etc.
+### 物联网协议
 
-### IoT Protocols
+AliOS Things支持丰富的云端连接协议：
 
----
+- Alink：阿里云平台，适用于智能生活； 也包括WiFi配置组件YWSS。
 
-AliOS Things supports rich cloud connection protocols:
+- MQTT：标准MQTT协议；已和阿里云物联网套件良好结合。
+- COAP：基于UDP的轻量级协议。和COAP FOTA结合便可为NB-IoT设备建立一个只有UDP的系统。
 
-- Alink: Alibaba Cloud Link platform, suitable for Smart Life. WiFi Provisioning component YWSS is also included.
-- MQTT: standard MQTT protocol, combining with Alibaba Cloud IoT Suite.
-- CoAP: light-weight UDP-based protocol. Together with CoAP FOTA, it is possible to build a UDP only system for like NB-IoT devices.
+### AT 解析器
 
-### AT Parser
+AT解析器提供了处理AT命令连接通信模块的框架。AT解析器可处理串行流解析；回调OOB可以处理模块的特殊AT命令。与SAL一起使用，应用程序甚至可以在AT模块中使用BSD socket。.
 
----
+## 工具
 
-AT Parser provides framework for handling AT commands with connected communication modules. AT Parser handles serial stream parsing, and OOB callback could be registered to handle module special AT commands. Working with SAL, applications can use BSD sockets even on AT modules.  
+### AliOS Studio 集成开发环境（IDE）
 
-## Tools
-
-### AliOS Studio IDE
-
----
-
-Implemented as a VS Code Plugin, it provides edit/build/debug functions. Refer to https://github.com/alibaba/AliOS-Things/wiki/AliOS-Things-Studio for more details.
+作为VS代码插件执行，可提供编辑/编译/调试功能。详情请看 <https://github.com/alibaba/AliOS-Things/wiki/AliOS-Things-Studio>
 
 ### uDevice Center
 
----
+和AliOS Studio一起，它为开发者提供了一个远程和多设备的调试环境。借助backbone测试平台框架，基于真实硬件的持续集成（CI）系统可以被方便地建立。
 
-Cooperating with AliOS Studio, it provides developers with a remote and multiple-devices debug environment. With the backbone Testbed framework, organizations can easily setup a CI based on real hardware.
+## 小结
 
-## Summary
-
-AliOS Things is designed for low power, resource constrained MCU and connectivity SoC, which is greatly suitable for IoT devices.
-
-For more detailed information, please go to: https://github.com/alibaba/AliOS-Things/wiki
+AliOS Things是为电量和资源有限的MCU，连接套接字SoC设计的，并非常适合于物联网设备。更多细节可以点击 https://github.com/alibaba/AliOS-Things/wiki

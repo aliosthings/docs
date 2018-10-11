@@ -1,6 +1,6 @@
-# Contact
+# 联系我们
 
-Mail to: `aliosthings@service.aliyun.com`
+邮箱 `aliosthings@service.aliyun.com`
 
 <div>{{ msg }}</div>
 

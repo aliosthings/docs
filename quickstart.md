@@ -1,75 +1,34 @@
-# Quick start
+# 快速开始
 
-This guide offers a glance at AliOS Things, by running directly on a linux machine.  
-If you are on Windows or Mac, maybe you'd like to turn directly to our [IDE](https://github.com/alibaba/AliOS-Things/wiki/AliOS-Things-Studio).
+本文通过直接在一台 linux 机器上运行 AliOS Things 来带您快速体验它。  
+如果您在 Windows 或 Mac 上工作，也可以使用我们提供的[IDE](https://github.com/alibaba/AliOS-Things/wiki/AliOS-Things-Studio)。
 
-## Setup environment
 
-You can either try [Setup Script for Linux/Mac](http://p28phe5s5.bkt.clouddn.com/setup_linux_osx.sh), or manually do steps below,  
-e.g. on a Ubuntu 16.04 LTS (Xenial Xerus) 64-bit PC, please make sure pip environment is based on Python 2.7 64bits.
+## 配置环境
 
+您可以尝试一键安装脚本[Setup Script for Linux/Mac](http://p28phe5s5.bkt.clouddn.com/setup_linux_osx.sh),
+或者按以下命令手动安装依赖的软件包
+例：在一台 Ubuntu 16.04 LTS (Xenial Xerus) 64-bit PC 上
 ```bash
 sudo apt-get install -y python
+sudo apt-get install -y gcc-multilib
+sudo apt-get install -y libssl-dev libssl-dev:i386
+sudo apt-get install -y libncurses5-dev libncurses5-dev:i386
+sudo apt-get install -y libreadline-dev libreadline-dev:i386
 sudo apt-get install -y python-pip
+sudo apt-get install -y minicom
 ```
-**Note:**
-- If meet network issue, you can download python and install it by manually, refer to 'https://tecadmin.net/install-python-2-7-on-ubuntu-and-linuxmint/'
-- For pip install, also download via 'https://mirrors.aliyun.com/pypi/simple/pip/' instead of 'https://pypi.org/project/pip/#files'
-then use `python setup.py install` to install pip. 
 
-## Install packages
-It is recommended to install `aos-cube` and `relevant packages` globally, which helps developing with AliOS Things Studio in the future.
+## 安装 aos-cube
+首先, 用 python 包管理器 `pip` 来安装 `aos-cube` 在全局环境，以便于后续使用 AliOS Things Studio 进行开发。
 ```bash
-# Install aos-cube steps
-
-# Pleae upgrade pip to latest firstly by below command.
-$python -m pip install --upgrade pip
-
-$ python -m pip install setuptools
-$ python -m pip install wheel
-$ python -m pip install aos-cube
+$ pip install setuptools
+$ pip install wheel
+$ pip install aos-cube
 ```
+!> 请确认`pip`环境是基于 Python 2.7 的。如果遇到权限问题，可能需要 `sudo` 来执行。
 
-```bash
-# Upgrade aos-cube as below steps
-
-$ python -m pip install --upgrade setuptools
-$ python -m pip install --upgrade wheel
-$ python -m pip install --upgrade aos-cube
-```
-
-**Note:** If you meet network issue, you can use below source to install/upgrade pip/aos-cube.
-```bash
-python -m pip install --trusted-host=mirrors.aliyun.com -i https://mirrors.aliyun.com/pypi/simple/ --upgrade pip
-pip install --trusted-host=mirrors.aliyun.com -i https://mirrors.aliyun.com/pypi/simple/   setuptools
-pip install --trusted-host=mirrors.aliyun.com -i https://mirrors.aliyun.com/pypi/simple/   wheel
-pip install --trusted-host=mirrors.aliyun.com -i https://mirrors.aliyun.com/pypi/simple/   aos-cube
-
-# use doubanio as backup source
-pip install  --trusted-host pypi.doubanio.com -i  http://pypi.doubanio.com/simple/  aos-cube
-```
-
-**Result:**  use `pip list` to show more as below
-```
-aos-cube         0.2.50
-certifi          2018.4.16
-chardet          3.0.4
-ecdsa            0.13
-esptool          2.4.1
-idna             2.7
-pip              18.0
-pyaes            1.6.1
-pyserial         3.4
-requests         2.19.1
-scons            3.0.1
-setuptools       40.0.0
-urllib3          1.23
-virtualenv       16.0.0
-virtualenv-clone 0.3.0
-wheel            0.31.1
-```
-
-## Run
+## 下载代码并编译运行
 
 ```bash
 git clone https://github.com/alibaba/AliOS-Things.git
@@ -78,15 +37,9 @@ aos make helloworld@linuxhost
 ./out/helloworld@linuxhost/binary/helloworld@linuxhost.elf
 ```
 
-Note: Please use below domestic git source if you meet network issue
-```bash
- git clone https://gitee.com/alios-things/AliOS-Things.git
-```
+## 效果
 
-
-## Result
-
-There you can see the delayed action starts in 1 sec and getting triggered every 5 seconds.
+可以看见 `app_delayed_action` 在1秒时启动，每5秒触发一次。
 ```bash
 $ ./out/helloworld@linuxhost/binary/helloworld@linuxhost.elf
  [   1.000]<V> AOS [app_delayed_action#9] : app_delayed_action:9 app

@@ -1,25 +1,38 @@
 ## AliOS Things
 
-> AliOS Things is Alibaba's IoT version of AliOS Family, it was announced in The Computing Conference 2017 in Hangzhou by Alibaba Cloud, and open sourced in 20<sup>th</sup>, October, 2017 at github: https://github.com/alibaba/AliOS-Things.
+> AliOS Things发布于2017年杭州云栖大会， 是 AliOS 家族旗下的、面向IoT领域的、高可伸缩的物联网操作系统
 
-## Vision
+## 愿景
 
-AliOS Things targets to build the turnkey solution for IoT infrastructure, with the key abilities of performance, simplicity, security, cloud integration, rich components and so on.  
-Further more, it natively supports the connection between devices and Aliyun Link, therefore can be widely applied in smart home, smart city, next-generation travel, etc.
+AliOS Things 致力于搭建云端一体化 IoT 基础设施，具备极致性能、极简开发、云端一体、丰富组件、安全防护等关键能力。AliOS Things支持多种多样的设备连接到阿里云 Link，可广泛应用在智能家居、智慧城市、工业，新出行等领域。
 
-See the [Quick start](quickstart.md) for more details.
+查看[快速开始](zh-cn/quickstart.md)了解详情。
 
-## Architecture Overview
+## 特性
 
-From an architectural point of view, AliOS Things adapts Layered Architecture and Component Architecture. From bottom to top, AliOS Things includes:
+**极简开发**
+- 基于Linux之上的轻量虚拟化环境，开发者直接在Linux平台上开发硬件无关的IoT应用和软件库，使用GDB/Valgrind/SystemTap 等PC平台工具诊断开发问题
+- 提供IDE，支持系统/内核行为Trace、Mesh组网图形化显示
+- 提供Shell交互，支持内存踩踏、泄露、最大栈深度等各类侦测
+- 提供面向组件的编译系统以及uCube工具，支持灵活组合IoT产品软件栈
+- 提供包括存储(掉电保护、负载均衡)在内的各类产品级别的组件
 
-- BSP: Board Support Package mainly developed and maintained by SoC Vendor
-- HAL: Hardware Abstraction Layer, like WiFi, UART
-- Kernel: Rhino RTOS Kernel, Yloop, VFS, KV Storage included
-- Protocol Stack: LwIP TCPIP Stack, uMesh mesh networking stack included
-- Security: TLS, TFS(Trusted Framework Service), TEE(Trusted Exexcution Environment)
-- AOS API: AliOS Things exposed APIs for Application and Middleware
-- Middleware: Alibaba's value-added and commonly seen IoT components included
-- Examples: hands-on sample codes, and well tested applications such as Alinkapp
+**即插即用的连接和丰富服务**
+- 支持uMesh即插即用网络技术，设备上电自动连网
+- 通过Alink与阿里云计算IoT服务无缝连接
 
-All modules have been organized as Components, and each component has its own .mk file to describe its dependency with other Components, which enables applications to choose components needed easily.
+**细颗粒度的FOTA更新**
+- 支持应用代码独立编译映像，IoT App独立极小映像升级
+- 支持映像高度压缩
+
+**彻底全面的安全保护**
+- 提供系统和芯片级别安全保护
+- 支持可信运行环境(支持ARMV8-M Trust Zone)
+- 支持预置ID2根身份证和非对称密钥以及基于ID2的可信连接和服务
+
+**高度优化的性能**
+- 内核支持Idle Task成本，Ram<1K,Rom<2k，提供硬实时能力
+- 提供YLOOP事件框架以及基于此整合的核心组件，避免栈空间消耗，核心架构良好支持极小FootPrint的设备
+
+**解决IoT实际问题的特性演进**
+- 更好的云端一体融合优化，更简单的开发体验，更安全，更优整体性能和算法支持，更多的特性演进，我们在路上

@@ -1,16 +1,16 @@
 # AliOS Things Developer Kit
 
-Developer Kit is brought to you by AliOS Things, aims at advanced development. It offers much richer resources compared with [Starter Kit](starterkit.md).
+Developer Kit 是 AliOS Things 官方出品的高阶开发板，提供了比 [Starter Kit](zh-ch/starterkit.md) 更加丰富的资源。
 
-As regards sensors, apart from commonly known inertial measurement sensors including accelerometer and gyro, it also integrates all kinds of environment sensing devices such as magnetometer, barometer, humidity & temperature sensor, IR detector & emitter, ALS and Proximity sensor. Accordingly, solutions for different IoT application scenarios can be tested and verified based on this platform.
+在传感器方面，除了惯导类加速度计、陀螺仪以外，还提供了大量环境感知类器件如磁力计、气压计、温湿度传感器、红外传感器以及接近光传感器，可以为各类物联网业务场景提供云端一体化集成的方案验证。
 
-Further more, the hardware interfaces offered by Developer Kit are rich enough for various purpose, as for instance, USB OTG, SD Card, Mini PCIe are all provided, even with Arduino shield interfaces. On the other hand, standalone WiFi module is integrated, making it much easier for cloud based application development, thanks to SAL(Socket Adapt Layer) software module.
+在硬件接口能力方面该款开发板资源也首屈一指，USB OTG, SD Card, Mini PCIe, Arduino shield 接口等等均有支持。另外板上集成 MCU 外挂 WiFi 模组方案，通过 SAL(Socket Adapt Layer) 为应用开发和数据上云提供了极简途径。
 
-Same as Starter Kit, it's straight forward for developers to do firmware uploading and debugging by accessing the on-board ST-LINK V2.
+和 Starter Kit 一样，用户可以直接使用板载 ST-LINK V2 进行固件烧录和调试。
 
-Quick start: [Launch Developer Kit with AliOS Studio](https://github.com/alibaba/AliOS-Things/wiki/Developer-Kit-Tutorial)
+快速开始：[使用 AliOS Studio 开发 Developer Kit](https://github.com/alibaba/AliOS-Things/wiki/Developer-Kit-Tutorial)
 
-## Features
+## 特性
 
 - MCU: [STM32L496VG](http://www.st.com/en/microcontrollers/stm32l496vg.html), LQFP 100, Cortex-M4 80MHz
 - Memory: 1MB Flash, 320KB SRAM
@@ -25,13 +25,13 @@ Quick start: [Launch Developer Kit with AliOS Studio](https://github.com/alibaba
 - SD card: Support 32GB
 - OS: AliOS Things
 
-## Snapshot
+## 产品图片
 
 ![](https://img.alicdn.com/tfs/TB122RCtntYBeNjy1XdXXXXyVXa-2373-3121.png)
 
 ![](https://img.alicdn.com/tfs/TB1hAjQsY9YBuNjy0FgXXcxcXXa-2381-3143.png)
 
-## Hardware Details
+## 详细参数
 
 | **项目**                      | **描述**                                                     | **规格**                                                     |
 | ----------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |

@@ -1,32 +1,36 @@
-## AliOS Things Socket Adapter Layer (SAL) 
+# AliOS Things 网络适配框架 - SAL
 
-*Abstract：* In many IoT application scenarios, communication chips need to be externally connected to MCU (such as WiFi、NB-IoT). To make the development of this kind of scenarios more easily, AliOS Things has provided Socket Adapter Layer (SAL) framework and related components. 
 
-AliOS Things has provided rich SAL development components to accelerate the development of MCU + communication chips scenarios. In such scenarios, MCU is connected to communication chips such as WiFi and NB-IoT through UART or SPI line. The operating system of AliOS Things and users' APP are operated in MCU, and when network data access is needed, receiving and transmitting of network load can be enabled through externally-connected communication chips. The communication between MCU and communication chips can be realized through AT Command channel or other private protocol channels.
+
+**摘要**：很多物联网应用场景中，都需要使用主控MCU外接连接芯片（如WiFi、NB-IoT）的解决方案。为方便这类场景的开发，AliOS Things提供了Socket Adapter Layer（SAL）框架和组件方案。
+
+
+
+AliOS Things中提供了丰富的SAL开发组件，来加速MCU+通信连接芯片的应用场景开发和部署。在此类应用场景中，主控MCU芯片通过UART或SPI总线与WiFi、NB-IoT等通信芯片相连，AliOS Things操作系统和用户APP运行在主控MCU中，需要网络数据访问时，通过外接的通信芯片进行网络负载的接收和发射。主控MCU和外接通信芯片之间的通信，可以是AT Command通道，也可以是厂商私有协议通道。
 
 ![at_scena2](https://img.alicdn.com/tfs/TB1pO7NmhSYBuNjSsphXXbGvVXa-374-397.png)
 
-## AliOS Things SAL framework overview 
+## AliOS Things SAL方案概述
 
-AliOS Things has provided development components such as `atparser`、`at_adapter` and `SAL`. With these components, users can carry out development easily. Meanwhile, vendors can improve their network access ability based on current MCU products. The following picture shows the SAL components and plans provided by AliOS Things :
+目前，AliOS Things提供了atparser、at_adapter、SAL等开发组件。借助这些组件，用户可以方便地进行应用开发，同时这些组件也方便厂商在现有MCU产品基础上通过外接通信芯片方式扩展网络访问能力。下图展示了AliOS Things提供的SAL组件和方案架构：
 
 ![](https://img.alicdn.com/tfs/TB1CCjJmDtYBeNjy1XdXXXXyVXa-1372-1344.png)
 
-Among them, `atparser` provides basic AT Command access interfaces and asynchronous transceiver mechanism. Users can directly use the interfaces provided by `atparser` for application development. If upper layer applications want to connect to network directly through `atparser`, you need to modify AT command.
+其中，atparser组件提供了基础的AT Command访问接口和异步收发机制。用户可以直接访问atparser组件提供的接口进行应用开发。上层应用直接通过atparser访问网络是，需要自行处理AT命令细节。
 
-Based on atparser, AliOS Things has further provided SAL components (Plan 1 in the above picture). SAL components can provide AT channels or vendors private protocol channels (such as WMI provided by Qualcomm), so that application layer no longer needs to pay attention to how communication chips operate in bottom layer. Instead, it only needs standard Socket interfaces to connect to network. SAL can support most of commonly-used Socket interfaces and can greatly improve the efficiency and reduce the difficulty of application layer development.
+基于atparser的基础上，AliOS Things进一步提供了Socket Adapter Layer（SAL）组件（即上图中的方案一）。SAL组件提供AT通道或厂商私有协议通道（如高通通信模组的WMI）到Socket套接字（如`socket`、`getaddrinfo`、`send`、`recvfrom`等）接口的对接。通过SAL组件，应用层不需要关注通信芯片底层操作的细节，只需要通过标准的Socket接口来达到访问网络的目的。SAL组件支持大多数常用的Socket接口。SAL组件可以很大程度上提高应用层开发的效率，显著降低应用层开发的难度。
 
-In addition, AliOS Things has also provided a network access plan based on AT Command--SAL LwIP mode (plan 3 in the above picture). It's designed based on a component tool called `at_adapter`. It enables the connection between AT bottom layer and LwIP, where AT channel is used as a network interface (`netif`). When using this plan, application layer access to network through standard Socket interfaces. This plan is seamlessly connected to LwIP protocol stack, and application layer can use all the interfaces and services provided by LwIP. But this plan requires communication chips to support IP transceiver mode. At present, moc108 provided by Mxchip has supported this mode.
+此外，AliOS Things还提供了另外一种基于AT Command的网络访问方案 - SAL LwIP模式（即上图中的方案三）。SAL LwIP模式基于at_adapter组件工具。at_adapter组件提供AT底层到LwIP的对接，即AT通道作为LwIP的一个网络接口（netif）。使用该方案时，应用层通过标准的Socket接口访问网络，不需要关注底层AT细节。该方案无缝对接LwIP协议栈，应用层可以使用所有LwIP提供的接口和服务。但该方案需要连接芯片固件支持IP包收发模式，目前庆科的moc108已经支持该模式。
 
-## Atparser 
+## atparser组件
 
-Atparser is one of the basic components in AliOS Things SAL framework. It has provided unified and standardized AT command access interfaces (such as `at.send`、`recv`、`write`、`read`、`oob`) and asynchronous transceiver mechanism (`at_worker`). At present, atparser can only support UART connection.
+atparser组件是AliOS Things SAL框架的基础组件之一，它提供统一和规范的AT命令访问接口（如`at.send`、`recv`、`write`、`read`、`oob`等）和异步收发机制（`at_worker`）。目前atparser组件仅支持了UART连接方式。
 
-Atparser has two working modes--NORMAL mode and ASYN mode. Working mode can be selected during atparser initialization.
+atparser有两种工作模式，即NORMAL模式和ASYN模式。工作模式的选择在atparser组件的初始化时进行。
 
-In NORMAL mode, upper layer applications can only have access to AT by single process / thread mode (only one process can access AT at the same time). Since AT bottom layer sends and receives data through serial mode (UART or other), in multiple processes, multiple AT reads and writes may produce data crossover, resulting in error in AT access. The following code is an example of using AT interface in NORMAL mode (connecting to WiFi AP) :
+NORMAL模式下，仅支持上层应用以单进程/线程方式访问AT（同一时刻只有一个进程访问AT）。由于AT底层通过串行方式（UART或其他）发送和接收数据，在多进程情况下，多个AT读写可能会产生数据交叉，从而造成AT访问的混乱及错误。下面是在NORMAL模式下，使用AT接口的示例（连接WiFi AP）：
 
-```
+```c
 if (at.send("AT+WJAP=test_AP,test_passwd") == false) {
   printf("at.send failed.\r\n");
   return -1;
@@ -36,22 +40,21 @@ if (at.recv("OK") == false) {
   printf("Connecting AP failed.\r\n");
   return -1
 }
-
 ```
 
-ASYN mode can support multi-process access to AT command and asynchronous information reception. In this system, only one thread (`at_worker`) is responsible for reading AT data. After sending thread sends out AT command, it will wait for at_worker to wake up. When at_worker receives the result data of corresponding AT command, it will passes the result to sending thread, and wakes up it to continue execution. Sending threads ensures that the sending of AT commands is executed by atom operation. Under ASYN mode, multiple processes can be supported to access AT at the same time.
+在ASYN模式下，支持AT命令的多进程访问以及收据的异步接收。系统中只有一个线程（`at_worker`）负责读取AT数据，发送线程发送完AT命令后，等待`at_worker`线程唤醒；`at_worker`线程接收到对应AT命令的结果数据后，将结果传递给发送线程，并唤醒发送线程继续执行。发送线程确保一个AT命令发送是原子操作。在ASYN模式下，可以支持多个进程对AT的访问。
 
-The handling of AT events (such as network data arrivals) is processed by registered `oob` callback function. At_worker can identify AT events and process them by calling oob.
+AT事件的处理（例如网络数据到达），通过注册的oob回调函数处理。`at_worker`线程负责识别AT事件并通过调用`oob`回调函数处理AT事件和数据。
 
-## SAL
+## Socket Adapter Layer (SAL)
 
-SAL provides standard Socket interfaces based on AT Command or vendor private protocols. The following picture is the architecture of SAL (plan 1).
+SAL模块提供基于AT Command或厂商私有协议方案实现的标准Socket接口访问。下图是SAL（方案一）的架构图。
 
 ![img](https://img.alicdn.com/tfs/TB1fCaGmCtYBeNjSspaXXaOOFXa-1332-914.png)
 
-SAL provides standard Socket interfaces to application layer. It can now support most commonly used Socket interfaces, and more will be supported in the future. The following are the Socket interfaces that SAL has currently supported :
+SAL对上（应用层）提供标准Socket接口访问。目前SAL支持多数常用的Socket接口，后续还将持续演进。以下是SAL目前支持的Socket接口：
 
-```
+```c
 int select(int maxfdp1, fd_set *readset, fd_set *writeset,
            fd_set *exceptset, struct timeval *timeout);
 int socket(int domain, int type, int protocol);
@@ -81,12 +84,11 @@ int shutdown(int s, int how);
 int getaddrinfo(const char *nodename, const char *servname,
                 const struct addrinfo *hints, struct addrinfo **res);
 int fcntl(int s, int cmd, int val);
-
 ```
 
-SAL has abstracted the communication modules / chips interfaces connected to control layer (as follows). Connection modules / chips from different vendors can access SAL through these interfaces.
+SAL层对下抽象了通信模组/芯片访问控制层接口（如下），不同厂家的连接模组/芯片，可以通过对接底层控制访问层接口来对接和支持SAL。
 
-```
+```c
 typedef struct sal_op_s {
     char *version;
     int (*init)(void);
@@ -98,23 +100,20 @@ typedef struct sal_op_s {
     int (*deinit)(void);
     int (*register_netconn_evt_cb)(netconn_evt_cb_t cb);
 } sal_op_t;
-
 ```
 
-## SAL LwIP mode
+## SAL LwIP模式
 
-AliOS Things has also provided SAL LwIP mode (plan 2). Its difference from plan 1 is that whole LwIP protocol stack is run in MCU, and LwIP protocol stack has access to network through AT. By contrast, in plan 1, protocol stack will not run in MCU side.
+AliOS Things还提供了SAL LwIP模式（方案二）。该方案区别于方案一的地方在于，主控MCU上运行完整的LwIP协议栈，LwIP协议栈底层通过AT方式访问网络；方案一中主控MCU侧不运行协议栈。
 
-The operation of this plan is similar to SLIP (Serial Line Internet Protocol). The difference lies in that no extra SLIP communication support is needed when bottom layer using AT commands and services provided by vendor modules / chips.
+该方案的运行方式类似于MCU行业常用的SLIP（Serial Line Internet Protocol）方案，区别在于底层使用厂商模组/芯片的AT Command命令和服务，厂商模组/芯片不需要额外再支持SLIP通信。
 
-At_adapter supports docking of AT bottom layer with LwIP network interface (netif). Through netif, AT channel can seamlessly connect to LwIP. In this mode, SAL provides a complete TCP/IP protocol stack interface and service for upper applications. But this plan requires communication chips to support IP transceiver mode. At present, moc108 provided by Mxchip has supported this mode.
+at_adapter组件提供AT底层到LwIP网络接口（netif）的对接。通过netif的对接，AT通道可以无缝对接上LwIP。该模式下，SAL对上层应用提供完整的TCP/IP协议栈接口和服务。该方案的缺点是需要AT通信模块固件支持IP包传输，目前moc108已经支持该模式。
 
-## Summary
+## 总结
 
-To sum up, AliOS Things provides rich SAL components and plans. It has the following advantages:
+综上所述，AliOS Things提供了丰富的AT组件和方案。AliOS Things提供的AT框架和组件，具有以下优势：
 
-- It provides a complete solution for scenarios that need communication chips to externally linked to MCU. 
-
-- It can greatly improve the efficiency and reduce the difficulty for application layer development.
-
-- It enables vendors to improve their network connecting ability based on current MCU products and plans. 
++ 为主控MCU外接连接芯片场景提供完整解决方案；
++ 可以降低上层应用开发基于AT场景的应用的难度，提高开发效率，加速产品部署；
++ 方便模组和设备厂商在现有成熟的MCU产品和方案上，通过AT方式扩展网络连接能力，而不需要将先有的MCU芯片切换成WiFi或其他具有网络通信能力的平台。

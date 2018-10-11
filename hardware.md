@@ -1,4 +1,4 @@
-# Hardware
+# 硬件支持
 
 ## ARM
 

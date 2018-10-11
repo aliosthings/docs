@@ -1,12 +1,15 @@
-# AliOS Things Certification
+# AliOS Things 认证
 
-The AliOS Things Certification services microcontroller (MCU) vendors who want to certificate their MCU-based hardware on AliOS Things. The goal of the AliOS Things is to ensure that developers can run AliOS Things on their choice of MCU-based hardware stably. In order to provide a consistent development experience for developers, the AliOS Things Certification develops a series of security, functionality, stability, and performance requirements that all microcontrollers must meet (according to actual hardware conditions).
+**AliOS Things** 是 AliOS 家族旗下的、面向IoT领域的、轻量级物联网嵌入式操作系统。**AliOS Things**将致力于搭建云端一体化IoT基础设施，具备极致性能、极简开发、云端一体、丰富组件、安全防护等关键能力，并支持终端设备连接阿里云Link，可广泛应用在智能家居、智慧城市、智慧工业、新出行、新商业等领域。
 
-[More](https://github.com/alibaba/AliOS-Things/wiki/Certification-Home)
+为了保证移植 **AliOS Things** 后芯片稳定工作，阿里云IoT为合作伙伴免费提供**AliOS Things 认证服务**，包括：
 
-### Why Certificate on AliOS Things
+* AliOS Things Kernel 测试
+* AliOS Things 通道测试
+* AliOS Things uMesh测试
+* AliOS Things 配网测试
+* AliOS Things FOTA测试
+* AliOS Things 安全测试
+* 等
 
-- Developers will get a reliable and consistent experience across a variety of certificated MCU-based hardware, which will enable developers to focus on the application code.
-- Microcontroller vendors will have the confidence that their microcontrollers reliably connect and interoperate with Alibaba Cloud Link.
-- AliOS Things Certification will help bridge the gap between cloud developers and embedded engineers,  accelerate the rapid development of the Internet of Things hardware and software ecology,enabling developers to rapidly evaluate, prototype, and productize Internet of Things solutions.
-
+请首先阅读[AliOS Things 认证流程](https://github.com/alibaba/AliOS-Things/wiki/Certification-Process)和[AliOS Things 自测指南](https://github.com/alibaba/AliOS-Things/wiki/Manual)，了解认证服务的整体流程和认证需要自测的测试项。

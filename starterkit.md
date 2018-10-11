@@ -1,15 +1,14 @@
 # AliOS Things Starter Kit
 
-AliOS Things Starter Kit provides rich resources，including on-board sensors, LCD screen(240*240), audio, WiFi module, etc.
-Even more, it is insanely easy for user to develop applications and extensions, thanks to AliOS Things, this powerful, flexible RTOS with all kinds of components.
+Starter Kit是为AliOS Things量身打造的开发板，提供了丰富的板上资源，包含板级传感器，LCD屏幕（240\*240），Audio，板上WiFi模块。AliOS Things是 AliOS 家族旗下的、面向IoT领域的、高可伸缩的物联网操作系统，详情请见 [AliOS Things](https://github.com/alibaba/AliOS-Things)
 
-As for developing and debugging, Starter Kit has integrated ST-LINK V2, no need for any external debugger.
+AliOS Things Starter Kit板上集成了ST-LINK V2，用户无需额外花费外接调试器。
 
-To simplify the development of Starter Kit, AliOS Studio IDE is offered to users for the one stop developing experience, including building, firmware uploading and debugging.
+围绕AliOS Things Starter Kit阿里还提供了一套免费，极简的开发工具alios-studio，基于该工具用户可以完成从编译到烧录到调试的完整的IDE开发环境。  
 
-Learn more: [Play Starter Kit with AliOS Studio](https://github.com/alibaba/AliOS-Things/wiki/Starter-Kit-Tutorial)
+详见：[使用 AliOS Studio 开发 Starter Kit](https://github.com/alibaba/AliOS-Things/wiki/Starter-Kit-Tutorial)
 
-## Features
+## 特性
 
 - MCU: STM32L433CCT6, 48LQFP, Cortex-M4, 80MHz
 - Memory: 256KB Flash, 64KB RAM
@@ -23,13 +22,13 @@ Learn more: [Play Starter Kit with AliOS Studio](https://github.com/alibaba/AliO
 - On-board ST-LINK/V2-1 debugger
 - OS: AliOS Things
 
-## Snapshot
+## 产品图片
 
 ![](https://img.alicdn.com/tfs/TB1_KoTiFmWBuNjSspdXXbugXXa-3704-2422.jpg)
 
-## Hardware Details
+## 详细参数
 
-| **Item**                      | **Description**                                              | **Specification**                                                     |
+| **项目**                      | **描述**                                                     | **规格**                                                     |
 | ----------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | CPU information               | CPU                                                          | STM32L433CCT6  ARM Contex-M4,80MHz                           |
 |                               | Memory                                                       | 64KB SRAM,256kB internal Flash                               |
@@ -57,6 +56,6 @@ Learn more: [Play Starter Kit with AliOS Studio](https://github.com/alibaba/AliO
 | OS                            | AliOS Things                                                 |                                                              |
 | Application                   | Wireless control, Wireless sensor, Audio decode, G-sensor Games... | | |
 
-## GUI Demo
+## GUI 示例
 
 ![](https://img.alicdn.com/tfs/TB17EnugqmWBuNjy1XaXXXCbXXa-484-387.gif)
