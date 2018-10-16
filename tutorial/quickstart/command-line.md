@@ -1,7 +1,6 @@
-# 快速开始
+# 使用命令行工具
 
-本文通过直接在一台 linux 机器上运行 AliOS Things 来带您快速体验它。  
-如果您在 Windows 或 Mac 上工作，也可以使用我们提供的[IDE](https://github.com/alibaba/AliOS-Things/wiki/AliOS-Things-Studio)。
+AliOS Things 在命令行中使用 [aos-cube](../../documentations/tools/aos-cube.md) 工具完成系统编译构建，参数以 `app` @ `board` 的形式组建出构建目标。
 
 ## 配置环境
 
