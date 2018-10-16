@@ -24,13 +24,13 @@ AliOS Things核心组件之一uMesh提供了AliOS Things原生自组织网络能
 
 uMesh自组织网络协议位于MAC层之上，及IP层之下。整个协议包括三个部分，协议核心部分，连接协议抽象层，及IP协议适配层。uMesh适用于需要大规模部署的场景，如室内定位，智能照明，及商业场景。目前，主要支持WiFi，正在开发对低功耗和BLE mesh的支持。
 
-![mesh\_stack](mesh_stack.png)
+![mesh\_stack](https://img.alicdn.com/tfs/TB1z_oTijDpK1RjSZFrXXa78VXa-890-539.png)
 
 ## 套接字适配层
 
 AliOS Things为了能够适配不同的连接协议，和不同连接芯片的能力，提供了SAL开发组件，来加速MCU+通信连接芯片的应用场景开发和部署。在此类应用场景中，主控MCU芯片通过UART或SPI总线与WiFi、NB-IoT等通信芯片相连，AliOS Things操作系统和用户APP运行在主控MCU中，需要网络数据访问时，通过外接的通信芯片进行网络负载的接收和发射。主控MCU和外接通信芯片之间的通信，可以是AT Command通道，也可以是厂商私有协议通道。
 
-![sal\_datagram](SAL_DATAGRAM.png)
+![sal\_datagram](https://img.alicdn.com/tfs/TB1TeoRimzqK1RjSZPcXXbTepXa-1372-1344.png)
 
 ## IP网络协议栈
 
@@ -68,7 +68,7 @@ WiFi芯片是目前支持最广泛的连接芯片之一。主要可以分为四�
 
 根据这四种不同的形式，AliOS Things提供了不同的功能组件组合。LwIP和SAL是根据WiFi芯片类型的必选项。WiFi配网和WiFi uMesh的支持是根据实际的需要。
 
-![net\_components](network_components.png)
+![net\_components](https://img.alicdn.com/tfs/TB13QRaixYaK1RjSZFnXXa80pXa-959-297.png)
 
 #### LoRaWAN
 
