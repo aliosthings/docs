@@ -1,4 +1,4 @@
-# AliOS Things Developer Kit
+# Developer Kit
 
 Developer Kit 是 AliOS Things 官方出品的高阶开发板，提供了比 [Starter Kit](https://github.com/librae8226/doc/tree/a18f68206bdb5f166b24658a7ca7ee8f48b12d18/zh-ch/starterkit.md) 更加丰富的资源。
 

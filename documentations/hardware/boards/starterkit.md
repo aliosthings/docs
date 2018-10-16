@@ -1,4 +1,4 @@
-# AliOS Things Starter Kit
+# Starter Kit
 
 Starter Kit是为AliOS Things量身打造的开发板，提供了丰富的板上资源，包含板级传感器，LCD屏幕（240\*240），Audio，板上WiFi模块。AliOS Things是 AliOS 家族旗下的、面向IoT领域的、高可伸缩的物联网操作系统，详情请见 [AliOS Things](https://github.com/alibaba/AliOS-Things)
 

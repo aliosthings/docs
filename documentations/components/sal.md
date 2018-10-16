@@ -1,4 +1,4 @@
-# AliOS Things 网络适配框架 - SAL
+# SAL
 
 **摘要**：很多物联网应用场景中，都需要使用主控MCU外接连接芯片（如WiFi、NB-IoT）的解决方案。为方便这类场景的开发，AliOS Things提供了Socket Adapter Layer（SAL）框架和组件方案。
 

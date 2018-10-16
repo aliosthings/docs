@@ -1,6 +1,6 @@
 # 使用命令行工具
 
-AliOS Things 在命令行中使用 [aos-cube](../../documentations/tools/aos-cube.md) 工具完成系统编译构建，参数以 `app` @ `board` 的形式组建出构建目标。
+AliOS Things 在命令行中使用 [aos-cube](../../documentations/tools/aos-cube.md) 工具完成系统编译构建，参数以 `app@board` 的形式组建出构建目标。
 
 ## 配置环境
 

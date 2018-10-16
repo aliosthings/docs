@@ -4,7 +4,7 @@
 该文档正在建设中，请勿参考！
 {% endhint %}
 
-![](https://img.alicdn.com/tfs/TB1JlOChbvpK1RjSZFqXXcXUVXa-400-82.svg)
+## ![](https://img.alicdn.com/tfs/TB1e1U7vyAnBKNjSZFvXXaTKXXa-973-200.png)
 
 AliOS Things 发布于2017年杭州云栖大会， 是 AliOS 家族旗下的、面向 IoT 领域的、高可伸缩的物联网操作系统。
 
@@ -12,7 +12,7 @@ GitHub 仓库地址：[https://github.com/alibaba/AliOS-Things](https://github.c
 
 ## 愿景
 
-AliOS Things 致力于搭建云端一体化 IoT 基础设施，具备极致性能、极简开发、云端一体、丰富组件、安全防护等关键能力。AliOS Things支持多种多样的设备连接到阿里云 Link，可广泛应用在智能家居、智慧城市、工业，新出行等领域。
+AliOS Things 致力于搭建云端一体化 IoT 基础设施，具备极致性能、极简开发、云端一体、丰富组件、安全防护等关键能力。AliOS Things 支持多种多样的设备连接到阿里云 Link，可广泛应用在智能家居、智慧城市、工业，新出行等领域。
 
 ## 特性
 
@@ -21,7 +21,7 @@ AliOS Things 致力于搭建云端一体化 IoT 基础设施，具备极致性�
 * 基于Linux之上的轻量虚拟化环境，开发者直接在 Linux 平台上开发硬件无关的 IoT 应用和软件库，使用GDB/Valgrind/SystemTap 等 PC 平台工具诊断开发问题
 * 提供 IDE，支持系统/内核行为 Trace, Mesh 组网图形化显示
 * 提供 Shell 交互，支持内存踩踏、泄露、最大栈深度等各类侦测
-* 提供面向组件的编译系统以及 uCube 工具，支持灵活组合 IoT 产品软件栈
+* 提供面向组件的编译系统以及 aos-cube 工具，支持灵活组合 IoT 产品软件栈
 * 提供包括存储\(掉电保护、负载均衡\)在内的各类产品级别的组件
 
 **即插即用的连接和丰富服务**
