@@ -5,7 +5,3 @@
 * [云栖社区](https://yq.aliyun.com/teams/184)
 * [开发者论坛](https://bbs.aliyun.com/thread/410.html)
 
-## License
-
-AliOS Things 开源源码遵循 [Apache 2.0 license](LICENSE) 开源协议。
-

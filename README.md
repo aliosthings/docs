@@ -45,3 +45,7 @@ AliOS Things 致力于搭建云端一体化 IoT 基础设施，具备极致性�
 * 内核支持 Idle Task 成本，Ram &lt; 1K, Rom &lt; 2k，提供硬实时能力
 * 提供 Yloop 事件框架以及基于此整合的核心组件，避免栈空间消耗，核心架构良好支持极小 footprint的设备
 
+## License
+
+AliOS Things 开源代码遵循 [Apache 2.0 license](LICENSE) 开源协议。
+
