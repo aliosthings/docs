@@ -1,10 +1,4 @@
----
-description: AliOS Things 支持多种CPU架构，包括：ARM，C-Sky，MIPS，rl78，rx600，xtensa等。
----
-
 # SoC/MCU
-
-### 目前支持的CPU列表
 
 | 芯片厂商 | 芯片型号 | 架构 |
 | :---: | :---: | :---: |

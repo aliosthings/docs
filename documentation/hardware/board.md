@@ -1,7 +1,5 @@
 # Board
 
-### **AliOS-Things支持的开发板**
-
 | 开发板 | 芯片 | 主频\(MHz\) | Flash\(KB\) | RAM\(KB\) | 无线连接 |
 | :--- | :--- | :--- | :--- | :--- | :---: |
 | [developerkit](https://github.com/alibaba/AliOS-Things/blob/master/board/developerkit/README.md) | STM32L496VGTx | 80 | 1024 | 320 | - |
