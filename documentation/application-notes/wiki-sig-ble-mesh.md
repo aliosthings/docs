@@ -1,4 +1,4 @@
-# AliOS Things SIG BLE Mesh 搭建指南
+# SIG BLE Mesh 搭建指南
 
 ## 硬件准备
 
@@ -23,7 +23,7 @@ Raspberry PI3一块
 设置交叉编译工具链路径。
 
 ```text
-`luwang@ubuntu:~/raspberry-pi/linux$ export CCPREFIX=/home/luwang/raspberry-pi/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/bin/arm-linux-gnueabihf- 
+luwang@ubuntu:~/raspberry-pi/linux$ export CCPREFIX=/home/luwang/raspberry-pi/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/bin/arm-linux-gnueabihf- 
 luwang@ubuntu:~/raspberry-pi/linux$ ${CCPREFIX}gcc -v
 Using built-in specs.
 COLLECT_GCC=/home/luwang/raspberry-pi/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/bin/arm-linux-gnueabihf-gcc
@@ -32,7 +32,7 @@ Target: arm-linux-gnueabihf
 Configured with: /cbuild/slaves/oorts/crosstool-ng/builds/arm-linux-gnueabihf-raspbian-linux/.build/src/gcc-linaro-4.8-2014.01/configure --build=i686-build_pc-linux-gnu --host=i686-build_pc-linux-gnu --target=arm-linux-gnueabihf --prefix=/cbuild/slaves/oorts/crosstool-ng/builds/arm-linux-gnueabihf-raspbian-linux/install --with-sysroot=/cbuild/slaves/oorts/crosstool-ng/builds/arm-linux-gnueabihf-raspbian-linux/install/arm-linux-gnueabihf/libc --enable-languages=c,c++,fortran --disable-multilib --enable-multiarch --with-arch=armv6 --with-tune=arm1176jz-s --with-fpu=vfp --with-float=hard --with-pkgversion='crosstool-NG linaro-1.13.1-4.8-2014.01 - Linaro GCC 2013.11' --with-bugurl=https://bugs.launchpad.net/gcc-linaro --enable-__cxa_atexit --enable-libmudflap --enable-libgomp --enable-libssp --with-gmp=/cbuild/slaves/oorts/crosstool-ng/builds/arm-linux-gnueabihf-raspbian-linux/.build/arm-linux-gnueabihf/build/static --with-mpfr=/cbuild/slaves/oorts/crosstool-ng/builds/arm-linux-gnueabihf-raspbian-linux/.build/arm-linux-gnueabihf/build/static --with-mpc=/cbuild/slaves/oorts/crosstool-ng/builds/arm-linux-gnueabihf-raspbian-linux/.build/arm-linux-gnueabihf/build/static --with-isl=/cbuild/slaves/oorts/crosstool-ng/builds/arm-linux-gnueabihf-raspbian-linux/.build/arm-linux-gnueabihf/build/static --with-cloog=/cbuild/slaves/oorts/crosstool-ng/builds/arm-linux-gnueabihf-raspbian-linux/.build/arm-linux-gnueabihf/build/static --with-libelf=/cbuild/slaves/oorts/crosstool-ng/builds/arm-linux-gnueabihf-raspbian-linux/.build/arm-linux-gnueabihf/build/static --enable-threads=posix --disable-libstdcxx-pch --enable-linker-build-id --enable-plugin --enable-gold --with-local-prefix=/cbuild/slaves/oorts/crosstool-ng/builds/arm-linux-gnueabihf-raspbian-linux/install/arm-linux-gnueabihf/libc --enable-c99 --enable-long-long --with-float=hard
 Thread model: posix
 gcc version 4.8.3 20140106 (prerelease) (crosstool-NG linaro-1.13.1-4.8-2014.01 - Linaro GCC 2013.11) 
-luwang@ubuntu:~/raspberry-pi/linux$`
+luwang@ubuntu:~/raspberry-pi/linux$
 ```
 
 获取kernel编译文件.config。这里从现有的Raspberry PI上获取内核编译的.config。Raspberry PI上安装的镜像是2017-11-29-raspbian-stretch.img。
@@ -48,17 +48,17 @@ luwang@ubuntu:~/raspberry-pi/linux$`
 修改配置文件以下配置选项
 
 ```text
-`CONFIG_CRYPTO_CMAC=y
+CONFIG_CRYPTO_CMAC=y
 CONFIG_CRYPTO_USER_API=y
 CONFIG_CRYPTO_USER_API_HASH=y
-CONFIG_CRYPTO_USER_API_SKCIPHER=y`
+CONFIG_CRYPTO_USER_API_SKCIPHER=y
 ```
 
 编译生成内核
 
 ```text
-`cd PATH_TO_RASPBERRY_PI/linux
-ARCH=arm CROSS_COMPILE=${CCPREFIX} make`
+cd PATH_TO_RASPBERRY_PI/linux
+ARCH=arm CROSS_COMPILE=${CCPREFIX} make
 ```
 
 生成内核modules
@@ -68,7 +68,7 @@ ARCH=arm CROSS_COMPILE=${CCPREFIX} make`
 得到以下log信息
 
 ```text
-`  INSTALL sound/soc/codecs/snd-soc-tas5713.ko
+  INSTALL sound/soc/codecs/snd-soc-tas5713.ko
   INSTALL sound/soc/codecs/snd-soc-tpa6130a2.ko
   INSTALL sound/soc/codecs/snd-soc-wm-adsp.ko
   INSTALL sound/soc/codecs/snd-soc-wm5102.ko
@@ -113,7 +113,7 @@ ARCH=arm CROSS_COMPILE=${CCPREFIX} make`
   INSTALL .modules/lib/firmware/yam/1200.bin
   INSTALL .modules/lib/firmware/yam/9600.bin
   DEPMOD  4.9.77-v7+
-luwang@ubuntu:~/raspberry-pi/linux$ `
+luwang@ubuntu:~/raspberry-pi/linux$
 ```
 
 上半部log由于篇幅原因省略。这里记住版本信息是4.9.77-v7+。
@@ -125,18 +125,18 @@ luwang@ubuntu:~/raspberry-pi/linux$ `
 在linux机器上，从linux拷贝生成的modules到Raspberry PI
 
 ```text
-`cd PATH_TO_RASPBERRY_PI/modules
+cd PATH_TO_RASPBERRY_PI/modules
 tar czf modules.tgz *
-scp modules.tgz pi@RASPBERRY:/tmp`
+scp modules.tgz pi@RASPBERRY:/tmp
 ```
 
 将拷贝到Raspberry PI上的kernel和modules移动到boot和lib下面
 
 ```text
-`sudo cp /tmp/kernel_new.img /boot
+sudo cp /tmp/kernel_new.img /boot
 sudo tar zxf /tmp/modules.tgz
 sudo cp -rf /tmp/lib/firmware /lib/firmware
-sudo cp -rf /tmp/lib/modules /lib/modules`
+sudo cp -rf /tmp/lib/modules /lib/modules
 ```
 
 在Raspberry PI启动配置文件config.tx，文件最后面加入下面内容，指定从刚生成的kernel\_new.img中启动。
@@ -154,8 +154,8 @@ sudo cp -rf /tmp/lib/modules /lib/modules`
 安装后续所需依赖
 
 ```text
-`sudo apt-get update
-sudo apt-get install -y libusb-dev libdbus-1-dev libglib2.0-dev libudev-dev libical-dev libreadline-dev autotools-dev automake libtool`
+sudo apt-get update
+sudo apt-get install -y libusb-dev libdbus-1-dev libglib2.0-dev libudev-dev libical-dev libreadline-dev autotools-dev automake libtool
 ```
 
 ### json-c
@@ -167,11 +167,11 @@ sudo apt-get install -y libusb-dev libdbus-1-dev libglib2.0-dev libudev-dev libi
 编译并安装
 
 ```text
-`cd PATH_TO_JSON_C
+cd PATH_TO_JSON_C
 sh autogen.sh
 ./configure
 make
-sudo make install`
+sudo make install
 ```
 
 ### Bluez
@@ -179,14 +179,14 @@ sudo make install`
 从以下链接下载bluez-5.48.tar.gz，并解压到本地目录
 
 ```text
-`https://git.kernel.org/pub/scm/bluetooth/bluez.git
-tar xvf bluez-5.48.tar.gz`
+https://git.kernel.org/pub/scm/bluetooth/bluez.git
+tar xvf bluez-5.48.tar.gz
 ```
 
 修改mesh gatt在处理数据分段时的逻辑，diff如下
 
 ```text
-`luwang@ubuntu:~/bluez$ git diff mesh/gatt.c
+luwang@ubuntu:~/bluez$ git diff mesh/gatt.c
 diff --git a/mesh/gatt.c b/mesh/gatt.c
 index 9116a9d..8d564a9 100644
 --- a/mesh/gatt.c
@@ -202,17 +202,17 @@ index 9116a9d..8d564a9 100644
    +                }
 
                 if (prov)
-                        prov_data_ready(node, res, len);`
+                        prov_data_ready(node, res, len);
 ```
 
 编译安装
 
 ```text
-`cd PATH_TO_BLUEZ
+cd PATH_TO_BLUEZ
 ./bootstrap
 ./configure --enable-mesh --enable-debug
 make
-sudo make install`
+sudo make install
 ```
 
 ### Bluetooth controller
@@ -222,7 +222,7 @@ Bluetooth controller使用的是zephyr的bluetooth/hci\_uart应用，使用的�
 修改串口波特率为115200.
 
 ```text
-`luwang@ubuntu:~/zephyr/samples/bluetooth/hci_uart$ git diff nrf5.conf
+luwang@ubuntu:~/zephyr/samples/bluetooth/hci_uart$ git diff nrf5.conf
 diff --git a/samples/bluetooth/hci_uart/nrf5.conf b/samples/bluetooth/hci_uart/nrf5.conf
 index 4a507be..9aea95f 100644
  --- a/samples/bluetooth/hci_uart/nrf5.conf
@@ -235,7 +235,7 @@ index 4a507be..9aea95f 100644
  +CONFIG_UART_NRF5_BAUD_RATE=115200
  CONFIG_UART_NRF5_FLOW_CONTROL=y
  CONFIG_MAIN_STACK_SIZE=512
- CONFIG_SYSTEM_WORKQUEUE_STACK_SIZE=51`
+ CONFIG_SYSTEM_WORKQUEUE_STACK_SIZE=51
 ```
 
 ### Server端和Client端应用程序
@@ -247,8 +247,8 @@ index 4a507be..9aea95f 100644
 编译生成Server端应用
 
 ```text
-`cd PATH_TO_AOS
-aos make bluetooth.blemesh_srv@esp32devkitc hci_h4=1`
+cd PATH_TO_AOS
+aos make bluetooth.blemesh_srv@esp32devkitc hci_h4=1
 ```
 
 编译生成Client端应用
@@ -266,7 +266,7 @@ aos make bluetooth.blemesh_srv@esp32devkitc hci_h4=1`
 在Raspberry PI上，运行并进入meshctl命令行
 
 ```text
-`pi@raspberrypi:~/bluez-5.48/mesh $ ./meshctl .
+pi@raspberrypi:~/bluez-5.48/mesh $ ./meshctl .
 Local config directory not provided.
   netkeys = 1
   appkeys = 2
@@ -277,26 +277,26 @@ On/Off client model: new binding 0001
 Service added /org/bluez/hci0/dev_EC_60_BA_B5_36_D0/service000a
 Char added /org/bluez/hci0/dev_EC_60_BA_B5_36_D0/service000a/char000d:
 Char added /org/bluez/hci0/dev_EC_60_BA_B5_36_D0/service000a/char000b:
-Service added /org/bluez/hci0/dev_EC_60_BA_B5_36_D0/service0006`
+Service added /org/bluez/hci0/dev_EC_60_BA_B5_36_D0/service0006
 ```
 
 server节点上电，并开启发现unprovisioned 设备模式，发现新unprovisioned设备
 
 ```text
-`[meshctl]# discover-unprovisioned on
+[meshctl]# discover-unprovisioned on
 SetDiscoveryFilter success
 Discovery started
 Adapter property changed 
 [CHG] Controller B8:27:EB:B2:E7:4A Discovering: yes
         Mesh Provisioning Service (00001827-0000-1000-8000-00805f9b34fb)
             Device UUID: dddd0000000000000000000000000000
-            OOB: 0000`
+            OOB: 0000
 ```
 
 认证该设备
 
 ```text
-`[meshctl]# provision dddd
+[meshctl]# provision dddd
 Trying to connect Device EC:60:BA:B5:36:D0 AOS Device
 Adapter property changed 
 [CHG] Controller B8:27:EB:B2:E7:4A Discovering: no
@@ -336,25 +336,25 @@ Got provisioning data (65 bytes)
      42 7e 7f 0a be e2 ed e5 ff 27 43 26 f7 ab 8b ef 
      6f 
 Request decimal key (0 - 9999)
-[AOS 1m[mesh] Enter Numeric key: `
+[AOS 1m[mesh] Enter Numeric key: 
 ```
 
 查看server命令行OOB输出
 
 ```text
-`Initializing...
+Initializing...
 Bluetooth initialized
 Server
 Mesh initialized
 attention_on()
 OOB Number: 9023
-attention_off()`
+attention_off()
 ```
 
 在Raspberry PI上键入9023，进行后续provision，后续会打印一长串log
 
 ```text
-`[AOS 1m[mesh] Enter Numeric key: 9023
+[AOS 1m[mesh] Enter Numeric key: 9023
 GATT-TX:     03 05 fe 7f b1 04 84 f6 e9 0d 9e c7 62 19 6d 1f 
 GATT-TX:     03 64 
 GATT-RX:     03 05 ca f5 8e 55 ff 1d 92 86 26 fa 8e 22 8c 33 
@@ -455,7 +455,7 @@ GATT-RX:     7f 12 c7 5f 02 bc 0b 23 9f 13
   ]
 }
 GATT-TX:     00 f4 2b d6 e6 46 66 5b 65 31 1d 78 08 28 5d 16 
-GATT-TX:     aa e2 97 b6 18 84 1f 29 7f `
+GATT-TX:     aa e2 97 b6 18 84 1f 29 7f 
 ```
 
 上述log分为两个阶段，第一个阶段是利用provisioning connection进行provision，第二个阶段是建立mesh proxy connection，后续需要在这个connection上传输网络配置信息。
@@ -463,9 +463,9 @@ GATT-TX:     aa e2 97 b6 18 84 1f 29 7f `
 当上述log完整打印后，server端会打印provision成功完成的信息
 
 ```text
-`Provisioning completed!
+Provisioning completed!
 Net ID: 0
-Unicast addr: 0x0100`
+Unicast addr: 0x0100
 ```
 
 接下来，是在刚才建立的mesh proxy connection上传递网络配置信息
@@ -473,7 +473,7 @@ Unicast addr: 0x0100`
 首先是进入菜单
 
 ```text
-`[AOS Devic-Node-0100]# menu config
+[AOS Devic-Node-0100]# menu config
 Menu config:
 Available commands:
 -------------------
@@ -503,7 +503,7 @@ back                                              Return to main menu
 version                                           Display version
 quit                                              Quit program
 exit                                              Quit program
-help                                              Display help about this program`
+help                                              Display help about this program
 ```
 
 选择配置节点，这里可以看到节点ucast addr是0x0100
@@ -519,7 +519,7 @@ Configuring node 0100
 配置app key
 
 ```text
-`[config: Target = 0100]# target 0100[config: Target = 0100]# appkey-add 1
+[config: Target = 0100]# target 0100[config: Target = 0100]# appkey-add 1
 GATT-TX:     00 f4 e5 ca a3 ba 03 7b db 7f a6 aa 7c 02 25 75 
 GATT-TX:     6b 2a cf d4 93 0a 02 c3 8d 22 7d 30 ee 21 
 GATT-TX:     00 f4 41 5a 17 27 bf 6f 70 59 1e 4e 60 2d be 4f 
@@ -529,24 +529,24 @@ GATT-RX:     87 fc 43 8c b0 ad 90 a2 7a
 GATT-RX:     00 f4 56 a5 24 11 02 10 62 67 45 42 77 77 3a 7a 
 GATT-RX:     ec 3e 8f 2f 26 56 4f d3 ba 
 Node 0100 AppKey Status Success
-    NetKey 000, AppKey 001`
+    NetKey 000, AppKey 001
 
 将server节点的element 0的sensor server model (0x1100)绑定到app key index =1的app key上
 
-`[config: Target = 0100]# bind 0 1 1100
+[config: Target = 0100]# bind 0 1 1100
 GATT-TX:     00 f4 cb 2a f4 45 0f 4d 25 b0 47 d8 15 72 ba 89 
 GATT-TX:     61 fc ec 15 7e fe 8c dc 30 e6 04 
 GATT-RX:     00 f4 af 08 09 a9 12 03 dd fa df 1a 5f e4 7e c1 
 GATT-RX:     4f c8 58 84 82 77 8c 62 d1 cb 59 f9 
 Node 0100 Model App Status Success
     Element 0100 AppIdx 001
-ModelId 1100`
+ModelId 1100
 ```
 
 增加sensor server model \(0x1100\)订阅发布地址0xc000的信息
 
 ```text
-`[config: Target = 0100]# sub-add 0100 c000 1100
+[config: Target = 0100]# sub-add 0100 c000 1100
 GATT-TX:     00 f4 fe fa 07 e1 60 7a 1a ac d1 26 3a 45 8e f7 
 GATT-TX:     5e 8e ff 79 9d aa 90 10 ab b8 ef 
 GATT-RX:     00 f4 a8 c7 92 53 ee 9e 15 c7 fb 47 3e e8 07 fb 
@@ -555,13 +555,13 @@ GATT-RX:     c4 ea 8a f7 2d 71 3a 33 da 12 e9 0f
 Subscription changed for node 0100 status: Success
 Element Addr:    0100
 Subscr Addr:    c000
-Model ID:    1100`
+Model ID:    1100
 ```
 
 设置sensor server model \(0x1100\)使用app key index = 1的app key发布信息，发布地址是0xc000，
 
 ```text
-`[config: Target = 0100]# pub-set 0100 c000 1 0 0 1100
+[config: Target = 0100]# pub-set 0100 c000 1 0 0 1100
 GATT-TX:     00 f4 d1 a1 54 ee 1b 9f 18 4e 3c 44 ab 57 f9 82 
 GATT-TX:     73 41 9e 9c ab 3d 5c dd ad 27 c3 18 b7 22 
 GATT-TX:     00 f4 d0 95 d8 43 e4 87 12 96 14 bf 52 55 5a 8a 
@@ -580,7 +580,7 @@ Retransmit count: 0
 Retransmit Interval Steps: 0
 GATT-TX:     00 f4 d2 0f fb e4 49 24 a0 6c 7d 34 a8 bd dc ca 
 GATT-TX:     c6 a8 9f 17 d0 eb 5b 46 31 
-[config: Target = 0100]# `
+[config: Target = 0100]# 
 ```
 
 ### Provisioning和配置Client节点
@@ -588,7 +588,7 @@ GATT-TX:     c6 a8 9f 17 d0 eb 5b 46 31
 在Raspberry PI上，运行并进入meshctl命令行
 
 ```text
-`pi@raspberrypi:~/bluez-5.48/mesh $ ./meshctl .
+pi@raspberrypi:~/bluez-5.48/mesh $ ./meshctl .
 Local config directory not provided.
   netkeys = 1
   appkeys = 2
@@ -600,26 +600,26 @@ On/Off client model: new binding 0001
 Service added /org/bluez/hci0/dev_EC_60_BA_B5_36_D0/service000a
 Char added /org/bluez/hci0/dev_EC_60_BA_B5_36_D0/service000a/char000d:
 Char added /org/bluez/hci0/dev_EC_60_BA_B5_36_D0/service000a/char000b:
-Service added /org/bluez/hci0/dev_EC_60_BA_B5_36_D0/service0006`
+Service added /org/bluez/hci0/dev_EC_60_BA_B5_36_D0/service0006
 ```
 
 client节点上电，并开启发现unprovisioned 设备模式，发现新unprovisioned设备
 
 ```text
-`[meshctl]# discover-unprovisioned on
+[meshctl]# discover-unprovisioned on
 SetDiscoveryFilter success
 Discovery started
 Adapter property changed 
 [CHG] Controller B8:27:EB:B2:E7:4A Discovering: yes
         Mesh Provisioning Service (00001827-0000-1000-8000-00805f9b34fb)
             Device UUID: dddd0000000000000000000000000000
-            OOB: 0000`
+            OOB: 0000
 ```
 
 认证该设备
 
 ```text
-`[meshctl]# provision dddd
+[meshctl]# provision dddd
 Trying to connect Device D6:FB:47:4F:7E:A9 AOS Device
 Adapter property changed 
 [CHG] Controller B8:27:EB:B2:E7:4A Discovering: no
@@ -663,22 +663,22 @@ Got provisioning data (65 bytes)
      56 f8 97 3c a9 bf de b6 64 00 f5 77 91 73 3f 94 
      62 
 Request decimal key (0 - 9999)
-[AOS 1m[mesh] Enter Numeric key:`
+[AOS 1m[mesh] Enter Numeric key:
 ```
 
 查看server命令行OOB输出
 
 ```text
-`Initializing...
+Initializing...
 Bluetooth initialized
 Mesh initialized
-OOB Number: 4159`
+OOB Number: 4159
 ```
 
 在Raspberry PI上键入4159，进行后续provision，后续会打印一长串log
 
 ```text
-`[AOS 1m[mesh] Enter Numeric key: 4159
+[AOS 1m[mesh] Enter Numeric key: 4159
 GATT-TX:     03 05 20 2e 58 e4 b8 06 93 0d a2 b5 2f 7b eb 16 
 GATT-TX:     99 07 
 GATT-RX:     03 05 fd ee fd f5 3d 54 71 42 91 92 64 a4 69 46 
@@ -778,7 +778,7 @@ GATT-RX:     ee 7a 7c 6b 13 63 37 ce
   ]
 }
 GATT-TX:     00 f4 71 66 e6 89 61 44 19 6b c1 75 a4 a9 b8 f2 
-GATT-TX:     ed 9b b9 ee 99 b5 96 bc 05 `
+GATT-TX:     ed 9b b9 ee 99 b5 96 bc 05 
 ```
 
 上述log分为两个阶段，第一个阶段是利用provisioning connection进行provision，第二个阶段是建立mesh proxy connection，后续需要在这个connection上传输网络配置信息。
@@ -786,9 +786,9 @@ GATT-TX:     ed 9b b9 ee 99 b5 96 bc 05 `
 当上述log完整打印后，server端会打印provision成功完成的信息
 
 ```text
-`Provisioning completed!
+Provisioning completed!
 Net ID: 0
-Unicast addr: 0x0101`
+Unicast addr: 0x0101
 ```
 
 接下来，是在刚才建立的mesh proxy connection上传递网络配置信息
@@ -796,7 +796,7 @@ Unicast addr: 0x0101`
 首先是进入菜单
 
 ```text
-`[AOS Device-Node-0101]# menu config
+[AOS Device-Node-0101]# menu config
 Menu config:
 Available commands:
 -------------------
@@ -826,21 +826,21 @@ back                                              Return to main menu
 version                                           Display version
 quit                                              Quit program
 exit                                              Quit program
-help                                              Display help about this program`
+help                                              Display help about this program
 ```
 
 选择配置节点，这里可以看到节点ucast addr是0x0101
 
 ```text
-`[AOS Device-Node-0101]# target 0101
+[AOS Device-Node-0101]# target 0101
 Configuring node 0101
-[config: Target = 0101]# target 0101[config: Target = 0101]#`
+[config: Target = 0101]# target 0101[config: Target = 0101]#
 ```
 
 配置app key
 
 ```text
-`[config: Target = 0101]# target 0101[config: Target = 0101]# appkey-add 1
+[config: Target = 0101]# target 0101[config: Target = 0101]# appkey-add 1
 GATT-TX:     00 f4 2b 37 95 64 e7 fe ba 41 b3 c8 d9 0c f4 0c 
 GATT-TX:     76 36 a4 f0 f9 c4 f8 93 73 8a 3d 7d 7e c1 
 GATT-TX:     00 f4 43 6e 87 5d 09 0b 4b 05 a0 1b c0 48 da a1 
@@ -850,26 +850,26 @@ GATT-RX:     b9 77 dc 71 b5 10 ec b1 85
 GATT-RX:     00 f4 81 91 ee 63 66 b4 5a 42 6f 70 f6 d2 12 93 
 GATT-RX:     2d 9f 21 2d fa a3 89 2f 4b 
 Node 0101 AppKey Status Success
-    NetKey 000, AppKey 001`
+    NetKey 000, AppKey 001
 ```
 
 将client节点的element 0的sensor client model \(0x1102\)绑定到app key index =1的app key上
 
 ```text
-`[config: Target = 0101]# bind 0 1 1102
+[config: Target = 0101]# bind 0 1 1102
 GATT-TX:     00 f4 97 c8 22 ee 6f 11 c3 c6 7c 5c 4f 88 e4 3d 
 GATT-TX:     36 9e 19 c7 3f a8 f3 d3 d4 7d 90 
 GATT-RX:     00 f4 e9 e9 33 90 5a f3 cb 88 c1 3e 44 af f6 61 
 GATT-RX:     d0 ef 47 35 35 c3 03 8a c9 43 01 7d 
 Node 0101 Model App Status Success
     Element 0101 AppIdx 001
-ModelId 1102`
+ModelId 1102
 ```
 
 增加sensor client model \(0x1102\)订阅发布地址0xc000的信息
 
 ```text
-`[config: Target = 0101]# sub-add 0101 c000 1102
+[config: Target = 0101]# sub-add 0101 c000 1102
 GATT-TX:     00 f4 c5 5e 47 70 42 84 3b 28 14 26 60 83 01 69 
 GATT-TX:     7c 25 c3 c2 d9 1d d3 fb c0 e5 65 
 GATT-RX:     00 f4 6f 71 02 d9 ec 00 cf c1 96 f0 3a 7f ea a9 
@@ -878,13 +878,13 @@ GATT-RX:     b1 fb 6d 70 31 62 d8 d0 4b 5d 81 a6
 Subscription changed for node 0101 status: Success
 Element Addr:    0101
 Subscr Addr:    c000
-Model ID:    1102`
+Model ID:    1102
 ```
 
 设置sensor client model \(0x1102\)使用app key index = 1的app key发布信息，发布地址是0xc000，
 
 ```text
-`[config: Target = 0101]# pub-set 0101 c000 1 0 0 1102
+[config: Target = 0101]# pub-set 0101 c000 1 0 0 1102
 GATT-TX:     00 f4 5a 22 c5 d2 d0 76 94 a9 7f 70 6e 64 c1 f3 
 GATT-TX:     be 58 43 fc f1 61 f0 ac dc ce 4d 0b 9c f1 
 GATT-TX:     00 f4 1a 8a af 58 92 d2 d5 38 b2 0f 62 56 34 96 
@@ -902,22 +902,22 @@ Period: 0 ms
 Retransmit count: 0
 Retransmit Interval Steps: 0
 GATT-TX:     00 f4 f0 60 6a 70 db 3b e2 60 a6 c8 50 d9 03 36 
-GATT-TX:     d5 a1 47 c9 2f 25 49 5e 47`
+GATT-TX:     d5 a1 47 c9 2f 25 49 5e 47
 ```
 
 上述配置全部完成后，可以在client节点看到周期性发送温度请求信息和收到回复的log
 
 ```text
-`Sensor status Get request sent with OpCode 0x00008231
+Sensor status Get request sent with OpCode 0x00008231
 Got the sensor status 
 Sensor ID: 0x2a1f
-Temperature value: 27`
+Temperature value: 27
 ```
 
 在server节点可以看到周期性接收到温度请求和发送回复的log
 
 ```text
-`Sensor Status Get request received
-Sensor status sent with OpCode 0x00000052`
+Sensor Status Get request received
+Sensor status sent with OpCode 0x00000052
 ```
 

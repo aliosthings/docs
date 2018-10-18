@@ -65,13 +65,9 @@ AliOS Things提供了AliOS Things Studio集成开发环境，基于AliOS Things 
 
 #### 创建应用项目
 
-关于如何在AliOS Things Studio中创建应用，请参考[使用AliOS Things Studio创建应用](https://github.com/alibaba/AliOS-Things/wiki/AliOS-Things-Studio#22-创建-app-项目)。创建完项目后，用户可以在AliOS Things Studio中添加、编辑应用代码。
+关于如何在AliOS Things Studio中创建应用，请参考[使用AliOS Things Studio 创建应用](https://github.com/alibaba/AliOS-Things/wiki/AliOS-Things-Studio#22-创建-app-项目)。创建完项目后，用户可以在AliOS Things Studio中添加、编辑应用代码。
 
 #### 编译、烧录和调试
 
-AliOS Things Studio下的编译、烧录和调试步骤，可以参照：[IDE开发环境](https://github.com/alibaba/AliOS-Things/wiki/AliOS-Things-Studio)。
-
-## 总结
-
-本文描述了基于AliOS Things的应用模型，介绍了软硬件开发环境的搭建、应用开发的基本步骤。以helloworld为例，展示了如何基于AliOS Things进行应用开发。本文最后，还介绍了AliOS Things提供的丰富组件和接口，以及如何利用这个组件进行应用开发。 想了解AliOS Things更详细的信息，请访问[AliOS Things Github主页](https://github.com/alibaba/AliOS-Things)。
+AliOS Things Studio下的编译、烧录和调试步骤，可以参照 [IDE 开发环境](https://github.com/alibaba/AliOS-Things/wiki/AliOS-Things-Studio)。
 

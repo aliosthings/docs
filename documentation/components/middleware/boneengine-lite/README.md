@@ -2,7 +2,7 @@
 
 **关键词说明** ：
 
-TinyEngine： BoneEngine@Lite的别名用语，等同于BoneEngine@Lite。
+TinyEngine: BoneEngine@Lite的别名用语，等同于BoneEngine@Lite。
 
 ## BoneEngine@Lite背景介绍
 
