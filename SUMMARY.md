@@ -75,6 +75,7 @@
 
 ## 社区
 
+* [贡献者](she-qu/gong-xian-zhe.md)
 * [官方渠道](she-qu/community.md)
 * [联系我们](she-qu/contact.md)
 
