@@ -30,7 +30,7 @@
   * [内核组件](documentation/rhino/components/README.md)
     * [调度与管理](documentation/rhino/components/sched.md)
     * [定时器](documentation/rhino/components/timer.md)
-    * [同步与互斥](documentation/rhino/components/tong-bu-yu-hu-chi.md)
+    * [同步与互斥](documentation/rhino/components/sync.md)
     * [工作队列](documentation/rhino/components/workqueue.md)
   * [移植文档](documentation/rhino/porting/README.md)
     * [指导与规范](documentation/rhino/porting/guide.md)
@@ -59,7 +59,7 @@
   * [uDevice Center](documentation/tools/udevice-center.md)
 * [应用笔记](documentation/application-notes/README.md)
   * [第一个C应用](documentation/application-notes/first-c-app.md)
-  * [SIG BLE Mesh 搭建指南](documentation/application-notes/wiki-sig-ble-mesh.md)
+  * [SIG BLE Mesh 搭建指南](documentation/application-notes/sig-ble-mesh.md)
 * [典型方案](documentation/profile/README.md)
   * [感知节点](documentation/profile/cognitive-node.md)
   * [协议网关](documentation/profile/gateway.md)
@@ -70,7 +70,7 @@
 
 ## 社区
 
-* [贡献者](she-qu/gong-xian-zhe.md)
-* [官方渠道](she-qu/community.md)
-* [联系我们](she-qu/contact.md)
+* [贡献者](community/credits.md)
+* [官方渠道](community/official.md)
+* [联系我们](community/contact.md)
 

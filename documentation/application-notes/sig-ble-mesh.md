@@ -1,6 +1,6 @@
 # SIG BLE Mesh 搭建指南
 
-## 硬件准备
+##  硬件准备
 
 Raspberry PI3一块
 
