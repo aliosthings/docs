@@ -56,7 +56,6 @@
   * [aos-cube](documentation/tools/aos-cube.md)
   * [AliOS Studio](documentation/tools/alios-studio.md)
   * [ST CubeMX Plugin](documentation/tools/st-cubemx-plugin.md)
-  * [uDevice Center](documentation/tools/udevice-center.md)
 * [应用笔记](documentation/application-notes/README.md)
   * [第一个C应用](documentation/application-notes/first-c-app.md)
   * [SIG BLE Mesh 搭建指南](documentation/application-notes/sig-ble-mesh.md)
